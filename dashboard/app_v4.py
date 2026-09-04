@@ -17,6 +17,7 @@ from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
 load_dotenv()
+NEWSAPI_KEY = os.getenv("NEWSAPI_KEY", "")
 
 # --- 1. CONFIGURACIÓN DE PÁGINA Y ESTILOS ---
 st.set_page_config(
@@ -201,11 +202,14 @@ def buscar_noticias_entidad(funcion: str, nombre: str) -> list:
     keywords = KEYWORDS_REALES.get(funcion, KEYWORDS_REALES["default"])
     query = " OR ".join(f'"{k}"' for k in keywords[:2])
     
-    if NEWSAPI_KEY:
+    # Leer la clave de forma segura sin importar el alcance
+    api_key = globals().get("NEWSAPI_KEY", "") or os.getenv("NEWSAPI_KEY", "")
+    
+    if api_key:
         try:
             resp = requests.get("https://newsapi.org/v2/everything", params={
                 "q": query, "language": "en", "sortBy": "publishedAt", "pageSize": 5,
-                "from": (datetime.now()-timedelta(days=7)).strftime("%Y-%m-%d"), "apiKey": NEWSAPI_KEY
+                "from": (datetime.now()-timedelta(days=7)).strftime("%Y-%m-%d"), "apiKey": api_key
             }, timeout=6)
             data = resp.json()
             if data.get("status")=="ok" and data.get("articles"):
@@ -213,7 +217,7 @@ def buscar_noticias_entidad(funcion: str, nombre: str) -> list:
         except Exception:
             pass
             
-    # Fallback confiable vía RSS
+    # Fallback confiable vía Google News RSS
     try:
         kw = keywords[0] if keywords else "geopolitics"
         rss_url = f"https://news.google.com/rss/search?q={urllib.parse.quote(kw)}&hl=en&gl=US&ceid=US:en"
