@@ -1,0 +1,163 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 750px;
+                 background-color: #0e1117;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#4b8bff", "font": {"color": "white"}, "id": "IZQUIERDA (Caos/Disoluci\u00f3n)", "label": "IZQUIERDA (Caos/Disoluci\u00f3n)", "shape": "dot", "size": 50, "title": "Fuerza Macro: IZQUIERDA (Caos/Disoluci\u00f3n)"}, {"color": "#ffffff", "font": {"color": "white"}, "id": "Cita: NT_01.20.21 \u1f41:1", "label": "Cita: NT_01.20.21 \u1f41:1", "shape": "dot", "size": 20, "title": " Cita: NT_01.20.21 \u1f41:1\n\n\ud83d\udcdc Original: \u03b4\u1f72 \u03b5\u1f36\u03c0\u03b5\u03bd \u03b1\u1f50\u03c4\u1fc7\u00b7 \u03a4\u03af \u03b8\u03ad\u03bb\u03b5\u03b9\u03c2; \u03bb\u03ad\u03b3\u03b5\u03b9 \u03b1\u1f50\u03c4\u1ff7\u00b7 \u0395\u1f30\u03c0\u1f72 \u1f35\u03bd\u03b1 \u03ba\u03b1\u03b8\u03af\u03c3\u03c9\u03c3\u03b9\u03bd \u03bf\u1f57\u03c4\u03bf\u03b9 \u03bf\u1f31 \u03b4\u03cd\u03bf \u03c5\u1f31\u03bf\u03af \u03bc\u03bf\u03c5 \u03b5\u1f37\u03c2 \u1f10\u03ba \u03b4\u03b5\u03be\u03b9\u1ff6\u03bd \u2e00\u03c3\u03bf\u03c5 \u03ba\u03b1\u1f76 \u03b5\u1f37\u03c2 \u1f10\u03be \u03b5\u1f50\u03c9\u03bd\u03cd\u03bc\u03c9\u03bd \u03c3\u03bf\u03c5 \u1f10\u03bd \u03c4\u1fc7 \u03b2\u03b1\u03c3\u03b9\u03bb\u03b5\u03af\u1fb3 \u03c3\u03bf\u03c5.\n\n\ud83d\udcdd Significado: Texto Original Koin\u00e9"}, {"color": "#ffffff", "font": {"color": "white"}, "id": "Cita: NT_01.20.23 \u2e00\u03bb\u03ad\u03b3\u03b5\u03b9:1", "label": "Cita: NT_01.20.23 \u2e00\u03bb\u03ad\u03b3\u03b5\u03b9:1", "shape": "dot", "size": 20, "title": " Cita: NT_01.20.23 \u2e00\u03bb\u03ad\u03b3\u03b5\u03b9:1\n\n\ud83d\udcdc Original: \u03b1\u1f50\u03c4\u03bf\u1fd6\u03c2\u00b7 \u03a4\u1f78 \u03bc\u1f72\u03bd \u03c0\u03bf\u03c4\u03ae\u03c1\u03b9\u03cc\u03bd \u03bc\u03bf\u03c5 \u2e00\u03c0\u03af\u03b5\u03c3\u03b8\u03b5, \u03c4\u1f78 \u03b4\u1f72 \u03ba\u03b1\u03b8\u03af\u03c3\u03b1\u03b9 \u1f10\u03ba \u03b4\u03b5\u03be\u03b9\u1ff6\u03bd \u03bc\u03bf\u03c5 \u03ba\u03b1\u1f76 \u1f10\u03be \u2e00\u03b5\u1f50\u03c9\u03bd\u03cd\u03bc\u03c9\u03bd \u03bf\u1f50\u03ba \u1f14\u03c3\u03c4\u03b9\u03bd \u2e00\u1f10\u03bc\u1f78\u03bd \u03b4\u03bf\u1fe6\u03bd\u03b1\u03b9, \u1f00\u03bb\u03bb\u2019 \u03bf\u1f37\u03c2 \u1f21\u03c4\u03bf\u03af\u03bc\u03b1\u03c3\u03c4\u03b1\u03b9 \u1f51\u03c0\u1f78 \u03c4\u03bf\u1fe6 \u03c0\u03b1\u03c4\u03c1\u03cc\u03c2 \u03bc\u03bf\u03c5.\n\n\ud83d\udcdd Significado: Texto Original Koin\u00e9"}, {"color": "#ffffff", "font": {"color": "white"}, "id": "Cita: NT_01.25.33 \u03ba\u03b1\u1f76:1", "label": "Cita: NT_01.25.33 \u03ba\u03b1\u1f76:1", "shape": "dot", "size": 20, "title": " Cita: NT_01.25.33 \u03ba\u03b1\u1f76:1\n\n\ud83d\udcdc Original: \u03c3\u03c4\u03ae\u03c3\u03b5\u03b9 \u03c4\u1f70 \u03bc\u1f72\u03bd \u03c0\u03c1\u03cc\u03b2\u03b1\u03c4\u03b1 \u1f10\u03ba \u03b4\u03b5\u03be\u03b9\u1ff6\u03bd \u03b1\u1f50\u03c4\u03bf\u1fe6 \u03c4\u1f70 \u03b4\u1f72 \u1f10\u03c1\u03af\u03c6\u03b9\u03b1 \u1f10\u03be \u03b5\u1f50\u03c9\u03bd\u03cd\u03bc\u03c9\u03bd.\n\n\ud83d\udcdd Significado: Texto Original Koin\u00e9"}, {"color": "#ffffff", "font": {"color": "white"}, "id": "Cita: NT_01.25.41 \u03c4\u03cc\u03c4\u03b5:1", "label": "Cita: NT_01.25.41 \u03c4\u03cc\u03c4\u03b5:1", "shape": "dot", "size": 20, "title": " Cita: NT_01.25.41 \u03c4\u03cc\u03c4\u03b5:1\n\n\ud83d\udcdc Original: \u1f10\u03c1\u03b5\u1fd6 \u03ba\u03b1\u1f76 \u03c4\u03bf\u1fd6\u03c2 \u1f10\u03be \u03b5\u1f50\u03c9\u03bd\u03cd\u03bc\u03c9\u03bd\u00b7 \u03a0\u03bf\u03c1\u03b5\u03cd\u03b5\u03c3\u03b8\u03b5 \u1f00\u03c0\u2019 \u1f10\u03bc\u03bf\u1fe6 \u2e00\u03bf\u1f31 \u03ba\u03b1\u03c4\u03b7\u03c1\u03b1\u03bc\u03ad\u03bd\u03bf\u03b9 \u03b5\u1f30\u03c2 \u03c4\u1f78 \u03c0\u1fe6\u03c1 \u03c4\u1f78 \u03b1\u1f30\u03ce\u03bd\u03b9\u03bf\u03bd \u03c4\u1f78 \u1f21\u03c4\u03bf\u03b9\u03bc\u03b1\u03c3\u03bc\u03ad\u03bd\u03bf\u03bd \u03c4\u1ff7 \u03b4\u03b9\u03b1\u03b2\u03cc\u03bb\u1ff3 \u03ba\u03b1\u1f76 \u03c4\u03bf\u1fd6\u03c2 \u1f00\u03b3\u03b3\u03ad\u03bb\u03bf\u03b9\u03c2 \u03b1\u1f50\u03c4\u03bf\u1fe6.\n\n\ud83d\udcdd Significado: Texto Original Koin\u00e9"}, {"color": "#ffffff", "font": {"color": "white"}, "id": "Cita: NT_01.27.38 \u03a4\u03cc\u03c4\u03b5:1", "label": "Cita: NT_01.27.38 \u03a4\u03cc\u03c4\u03b5:1", "shape": "dot", "size": 20, "title": " Cita: NT_01.27.38 \u03a4\u03cc\u03c4\u03b5:1\n\n\ud83d\udcdc Original: \u03c3\u03c4\u03b1\u03c5\u03c1\u03bf\u1fe6\u03bd\u03c4\u03b1\u03b9 \u03c3\u1f7a\u03bd \u03b1\u1f50\u03c4\u1ff7 \u03b4\u03cd\u03bf \u03bb\u1fc3\u03c3\u03c4\u03b1\u03af, \u03b5\u1f37\u03c2 \u1f10\u03ba \u03b4\u03b5\u03be\u03b9\u1ff6\u03bd \u03ba\u03b1\u1f76 \u03b5\u1f37\u03c2 \u1f10\u03be \u03b5\u1f50\u03c9\u03bd\u03cd\u03bc\u03c9\u03bd.\n\n\ud83d\udcdd Significado: Texto Original Koin\u00e9"}, {"color": "#ffffff", "font": {"color": "white"}, "id": "Cita: NT_02.10.40 \u03c4\u1f78:1", "label": "Cita: NT_02.10.40 \u03c4\u1f78:1", "shape": "dot", "size": 20, "title": " Cita: NT_02.10.40 \u03c4\u1f78:1\n\n\ud83d\udcdc Original: \u03b4\u1f72 \u03ba\u03b1\u03b8\u03af\u03c3\u03b1\u03b9 \u1f10\u03ba \u03b4\u03b5\u03be\u03b9\u1ff6\u03bd \u03bc\u03bf\u03c5 \u2e00\u1f22 \u1f10\u03be \u03b5\u1f50\u03c9\u03bd\u03cd\u03bc\u03c9\u03bd \u03bf\u1f50\u03ba \u1f14\u03c3\u03c4\u03b9\u03bd \u1f10\u03bc\u1f78\u03bd \u03b4\u03bf\u1fe6\u03bd\u03b1\u03b9, \u1f00\u03bb\u03bb\u2019 \u03bf\u1f37\u03c2 \u1f21\u03c4\u03bf\u03af\u03bc\u03b1\u03c3\u03c4\u03b1\u03b9.\n\n\ud83d\udcdd Significado: Texto Original Koin\u00e9"}, {"color": "#ffffff", "font": {"color": "white"}, "id": "Cita: NT_02.15.27 \u03ba\u03b1\u1f76:1", "label": "Cita: NT_02.15.27 \u03ba\u03b1\u1f76:1", "shape": "dot", "size": 20, "title": " Cita: NT_02.15.27 \u03ba\u03b1\u1f76:1\n\n\ud83d\udcdc Original: \u03c3\u1f7a\u03bd \u03b1\u1f50\u03c4\u1ff7 \u03c3\u03c4\u03b1\u03c5\u03c1\u03bf\u1fe6\u03c3\u03b9\u03bd \u03b4\u03cd\u03bf \u03bb\u1fc3\u03c3\u03c4\u03ac\u03c2, \u1f15\u03bd\u03b1 \u1f10\u03ba \u03b4\u03b5\u03be\u03b9\u1ff6\u03bd \u03ba\u03b1\u1f76 \u1f15\u03bd\u03b1 \u1f10\u03be \u03b5\u1f50\u03c9\u03bd\u03cd\u03bc\u03c9\u03bd \u2e00\u03b1\u1f50\u03c4\u03bf\u1fe6.\n\n\ud83d\udcdd Significado: Texto Original Koin\u00e9"}, {"color": "#ffffff", "font": {"color": "white"}, "id": "Cita: NT_05.21.03 \u2e00\u1f00\u03bd\u03b1\u03c6\u03ac\u03bd\u03b1\u03bd\u03c4\u03b5\u03c2:1", "label": "Cita: NT_05.21.03 \u2e00\u1f00\u03bd\u03b1\u03c6\u03ac\u03bd\u03b1\u03bd\u03c4\u03b5\u03c2:1", "shape": "dot", "size": 20, "title": " Cita: NT_05.21.03 \u2e00\u1f00\u03bd\u03b1\u03c6\u03ac\u03bd\u03b1\u03bd\u03c4\u03b5\u03c2:1\n\n\ud83d\udcdc Original: \u03b4\u1f72 \u03c4\u1f74\u03bd \u039a\u03cd\u03c0\u03c1\u03bf\u03bd \u03ba\u03b1\u1f76 \u03ba\u03b1\u03c4\u03b1\u03bb\u03b9\u03c0\u03cc\u03bd\u03c4\u03b5\u03c2 \u03b1\u1f50\u03c4\u1f74\u03bd \u03b5\u1f50\u03ce\u03bd\u03c5\u03bc\u03bf\u03bd \u1f10\u03c0\u03bb\u03ad\u03bf\u03bc\u03b5\u03bd \u03b5\u1f30\u03c2 \u03a3\u03c5\u03c1\u03af\u03b1\u03bd, \u03ba\u03b1\u1f76 \u2e00\u03ba\u03b1\u03c4\u03ae\u03bb\u03b8\u03bf\u03bc\u03b5\u03bd \u03b5\u1f30\u03c2 \u03a4\u03cd\u03c1\u03bf\u03bd, \u1f10\u03ba\u03b5\u1fd6\u03c3\u03b5 \u03b3\u1f70\u03c1 \u2e02\u03c4\u1f78 \u03c0\u03bb\u03bf\u1fd6\u03bf\u03bd \u1f26\u03bd\u2e03 \u1f00\u03c0\u03bf\u03c6\u03bf\u03c1\u03c4\u03b9\u03b6\u03cc\u03bc\u03b5\u03bd\u03bf\u03bd \u03c4\u1f78\u03bd \u03b3\u03cc\u03bc\u03bf\u03bd.\n\n\ud83d\udcdd Significado: Texto Original Koin\u00e9"}, {"color": "#ffffff", "font": {"color": "white"}, "id": "Cita: NT_27.10.02 \u03ba\u03b1\u1f76:1", "label": "Cita: NT_27.10.02 \u03ba\u03b1\u1f76:1", "shape": "dot", "size": 20, "title": " Cita: NT_27.10.02 \u03ba\u03b1\u1f76:1\n\n\ud83d\udcdc Original: \u1f14\u03c7\u03c9\u03bd \u1f10\u03bd \u03c4\u1fc7 \u03c7\u03b5\u03b9\u03c1\u1f76 \u03b1\u1f50\u03c4\u03bf\u1fe6 \u2e00\u03b2\u03b9\u03b2\u03bb\u03b1\u03c1\u03af\u03b4\u03b9\u03bf\u03bd \u1f20\u03bd\u03b5\u1ff3\u03b3\u03bc\u03ad\u03bd\u03bf\u03bd. \u03ba\u03b1\u1f76 \u1f14\u03b8\u03b7\u03ba\u03b5\u03bd \u03c4\u1f78\u03bd \u03c0\u03cc\u03b4\u03b1 \u03b1\u1f50\u03c4\u03bf\u1fe6 \u03c4\u1f78\u03bd \u03b4\u03b5\u03be\u03b9\u1f78\u03bd \u1f10\u03c0\u1f76 \u03c4\u1fc6\u03c2 \u03b8\u03b1\u03bb\u03ac\u03c3\u03c3\u03b7\u03c2, \u03c4\u1f78\u03bd \u03b4\u1f72 \u03b5\u1f50\u03ce\u03bd\u03c5\u03bc\u03bf\u03bd \u1f10\u03c0\u1f76 \u03c4\u1fc6\u03c2 \u03b3\u1fc6\u03c2,\n\n\ud83d\udcdd Significado: Texto Original Koin\u00e9"}]);
+                  edges = new vis.DataSet([{"color": "#ffffff", "from": "IZQUIERDA (Caos/Disoluci\u00f3n)", "to": "Cita: NT_01.20.21 \u1f41:1", "width": 1}, {"color": "#ffffff", "from": "IZQUIERDA (Caos/Disoluci\u00f3n)", "to": "Cita: NT_01.20.23 \u2e00\u03bb\u03ad\u03b3\u03b5\u03b9:1", "width": 1}, {"color": "#ffffff", "from": "IZQUIERDA (Caos/Disoluci\u00f3n)", "to": "Cita: NT_01.25.33 \u03ba\u03b1\u1f76:1", "width": 1}, {"color": "#ffffff", "from": "IZQUIERDA (Caos/Disoluci\u00f3n)", "to": "Cita: NT_01.25.41 \u03c4\u03cc\u03c4\u03b5:1", "width": 1}, {"color": "#ffffff", "from": "IZQUIERDA (Caos/Disoluci\u00f3n)", "to": "Cita: NT_01.27.38 \u03a4\u03cc\u03c4\u03b5:1", "width": 1}, {"color": "#ffffff", "from": "IZQUIERDA (Caos/Disoluci\u00f3n)", "to": "Cita: NT_02.10.40 \u03c4\u1f78:1", "width": 1}, {"color": "#ffffff", "from": "IZQUIERDA (Caos/Disoluci\u00f3n)", "to": "Cita: NT_02.15.27 \u03ba\u03b1\u1f76:1", "width": 1}, {"color": "#ffffff", "from": "IZQUIERDA (Caos/Disoluci\u00f3n)", "to": "Cita: NT_05.21.03 \u2e00\u1f00\u03bd\u03b1\u03c6\u03ac\u03bd\u03b1\u03bd\u03c4\u03b5\u03c2:1", "width": 1}, {"color": "#ffffff", "from": "IZQUIERDA (Caos/Disoluci\u00f3n)", "to": "Cita: NT_27.10.02 \u03ba\u03b1\u1f76:1", "width": 1}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "repulsion": {
+            "centralGravity": 0.15,
+            "damping": 0.9,
+            "nodeDistance": 160,
+            "springConstant": 0.04,
+            "springLength": 140
+        },
+        "solver": "repulsion",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

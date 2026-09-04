@@ -1,0 +1,19 @@
+mkdir matriz_core
+cd matriz_core
+python -m venv env
+env\Scripts\actívate
+
+
+matriz_core/
+data/
+ raw/
+ processed/
+vectors/
+ 0_linguistic/
+ 1_esoteric/
+ 2_geopolitics/
+ 3_biotech/
+ 4_astro/
+dashboard/
+ app.py
+ requirements.txt

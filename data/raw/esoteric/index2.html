@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ana Osuna | Performance Marketing & Ads Specialist</title>
+    <meta name="description" content="Estratega de Paid Media y Performance Marketing con 6 años de experiencia gestionando campañas de Meta Ads y Google Ads para E-commerce, Servicios y Agencias.">
+    
+    <!-- Fuentes Google: Plus Jakarta Sans + Playfair Display para toque editorial cálido -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500&display=display" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        sand: {
+                            50: '#FCFBF9',
+                            100: '#FAF8F5',
+                            200: '#F0ECE1',
+                            300: '#E2DBD0',
+                            800: '#3A3632',
+                            900: '#1F1D1B'
+                        },
+                        terracotta: {
+                            DEFAULT: '#D95338',
+                            hover: '#C2442B',
+                            light: '#FDF2F0'
+                        },
+                        sage: {
+                            DEFAULT: '#2D4030',
+                            light: '#EBF0EC'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                        mono: ['JetBrains Mono', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Sombra editorial sutil */
+        .card-shadow {
+            box-shadow: 0 4px 20px -2px rgba(31, 29, 27, 0.05), 0 2px 6px -1px rgba(31, 29, 27, 0.03);
+        }
+        .card-shadow-hover {
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .card-shadow-hover:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px -4px rgba(31, 29, 27, 0.08), 0 4px 12px -2px rgba(31, 29, 27, 0.04);
+        }
+        ::selection {
+            background: #D95338;
+            color: #FFFFFF;
+        }
+    </style>
+</head>
+<body class="bg-sand-100 text-sand-900 font-sans antialiased selection:bg-terracotta selection:text-white">
+
+    <!-- Top Notice / Garantía de Trato Humano -->
+    <div class="bg-sage text-white text-xs font-medium py-2 px-4 text-center">
+        <span>🤝 Trabajo directo e individual. 6 años de cancha en agencias y marcas independientes.</span>
+    </div>
+
+    <!-- Navegación Principal -->
+    <nav class="sticky top-0 z-40 bg-sand-100/90 backdrop-blur-md border-b border-sand-200 py-4 px-6">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <a href="#" class="flex items-center gap-2">
+                <span class="font-serif italic font-bold text-2xl text-sand-900">Ana Osuna</span>
+                <span class="text-xs bg-sand-200 text-sand-800 font-mono px-2 py-0.5 rounded-full">Ads & Growth</span>
+            </a>
+            
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-sand-800">
+                <a href="#clientes" class="hover:text-terracotta transition-colors">Clientes Reales</a>
+                <a href="#servicios" class="hover:text-terracotta transition-colors">Servicios & Precios</a>
+                <a href="#por-que-yo" class="hover:text-terracotta transition-colors">Cómo Trabajo</a>
+            </div>
+
+            <a href="#contacto" class="bg-terracotta hover:bg-terracotta-hover text-white text-xs font-bold px-5 py-2.5 rounded-md transition-all shadow-sm">
+                AGENDAR CONSULTA →
+            </a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION: Humana, Directa y Orientada a Ventas -->
+    <section class="py-16 md:py-24 px-6 border-b border-sand-200 bg-sand-50">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-12 gap-12 items-center">
+            
+            <div class="md:col-span-7 space-y-6">
+                <div class="inline-flex items-center gap-2 px-3 py-1 bg-terracotta-light text-terracotta text-xs font-semibold rounded-full">
+                    <span>✨ PERFORMANCE & MEDIACIÓN TÉCNICA</span>
+                </div>
+
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-sand-900 leading-[1.12] tracking-tight">
+                    Pauta publicitaria que <span class="font-serif italic font-normal text-terracotta">vende</span>, sin gastar a ciegas.
+                </h1>
+
+                <p class="text-lg text-sand-800 font-normal leading-relaxed max-w-xl">
+                    Soy Ana Osuna. Llevo 6 años creando, gestionando y destrabando campañas en Meta Ads y Google Ads. Ayudo a e-commerces, profesionales y agencias a escalar sus ingresos midiendo cada peso invertido.
+                </p>
+
+                <!-- Pruebas Sociales Rápida -->
+                <div class="pt-2 flex flex-wrap gap-4 text-xs font-mono text-sand-800">
+                    <span class="flex items-center gap-1.5 bg-sand-200 px-3 py-1.5 rounded">
+                        <strong class="text-sand-900 font-sans font-bold">+6 Años</strong> Experiencia
+                    </span>
+                    <span class="flex items-center gap-1.5 bg-sand-200 px-3 py-1.5 rounded">
+                        <strong class="text-sand-900 font-sans font-bold">32.7x</strong> ROAS Máximo
+                    </span>
+                    <span class="flex items-center gap-1.5 bg-sand-200 px-3 py-1.5 rounded">
+                        <strong class="text-sand-900 font-sans font-bold">100%</strong> Cuentas Propias
+                    </span>
+                </div>
+
+                <div class="pt-4 flex flex-col sm:flex-row gap-4">
+                    <a href="#servicios" class="bg-terracotta hover:bg-terracotta-hover text-white text-sm font-bold px-7 py-3.5 rounded-md text-center transition-all shadow-md">
+                        VER OPCIONES DE TRABAJO
+                    </a>
+                    <a href="#clientes" class="bg-white border border-sand-300 hover:border-sand-800 text-sand-900 text-sm font-semibold px-7 py-3.5 rounded-md text-center transition-all">
+                        EXPLORAR CASOS DE CLIENTES
+                    </a>
+                </div>
+            </div>
+
+            <!-- Card de Perfil / Confianza -->
+            <div class="md:col-span-5">
+                <div class="bg-white p-6 sm:p-8 rounded-xl border border-sand-200 card-shadow relative">
+                    <div class="absolute -top-3 -right-3 bg-sage text-white font-mono text-[10px] font-bold px-3 py-1 rounded-full uppercase">
+                        Destrabe Técnico 100%
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 rounded-full bg-sand-200 overflow-hidden flex-shrink-0 border-2 border-terracotta">
+                                <!-- Reemplazar src por tu foto personal real si querés -->
+                                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=300" alt="Ana Osuna" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <h2 class="font-bold text-sand-900 text-lg">Ana Osuna</h2>
+                                <p class="text-xs text-sand-800">Ads Manager & Growth Specialist</p>
+                                <p class="text-xs text-terracotta font-medium mt-0.5">Rosario, Argentina (Clientes Globales)</p>
+                            </div>
+                        </div>
+
+                        <hr class="border-sand-200">
+
+                        <p class="text-xs text-sand-800 italic leading-relaxed">
+                            "En un mercado donde los costos de pauta suben todos los días, ganar no es cuestión de poner más plata, sino de tener las cuentas ordenadas y los anuncios correctos."
+                        </p>
+
+                        <div class="space-y-2 pt-2 text-xs font-medium text-sand-900">
+                            <div class="flex items-center gap-2">
+                                <span class="text-terracotta">✓</span> Configuración completa de Meta Business Suite
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-terracotta">✓</span> Pixel loss, Conversions API (CAPI) y GA4
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-terracotta">✓</span> Estrategia de contenidos y copys persuasivos
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- SECTION: CLIENTES REALES Y CASOS TRABAJADOS -->
+    <section id="clientes" class="py-20 px-6 max-w-6xl mx-auto">
+        <div class="text-center max-w-2xl mx-auto mb-12 space-y-3">
+            <span class="text-xs font-mono font-bold text-terracotta uppercase tracking-wider">// PORTAFOLIO DE CAMPO</span>
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-sand-900">Marcas y proyectos que confiaron en mi gestión</h2>
+            <p class="text-sm text-sand-800">
+                Experiencia real en agencias, consultorías directas e intervenciones de emergencia.
+            </p>
+        </div>
+
+        <!-- Filtros Interáctivos de Clientes -->
+        <div class="flex flex-wrap justify-center gap-2 mb-10 text-xs font-medium" id="filter-container">
+            <button onclick="filterProjects('all')" class="filter-btn active bg-sand-900 text-white px-4 py-2 rounded-full transition-all">Todos los rubros</button>
+            <button onclick="filterProjects('ecommerce')" class="filter-btn bg-white border border-sand-300 text-sand-800 px-4 py-2 rounded-full hover:border-sand-800 transition-all">E-commerce & Moda</button>
+            <button onclick="filterProjects('servicios')" class="filter-btn bg-white border border-sand-300 text-sand-800 px-4 py-2 rounded-full hover:border-sand-800 transition-all">Servicios & Cursos</button>
+            <button onclick="filterProjects('asesoria')" class="filter-btn bg-white border border-sand-300 text-sand-800 px-4 py-2 rounded-full hover:border-sand-800 transition-all">Asesoría & Destrabe</button>
+        </div>
+
+        <!-- Grid de Proyectos / Clientes Reales -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <!-- Cliente 1: Amayra Chile -->
+            <div class="project-card ecommerce bg-white p-6 rounded-lg border border-sand-200 card-shadow-hover space-y-4">
+                <div class="flex justify-between items-start">
+                    <span class="text-[11px] font-mono font-bold text-sage bg-sage-light px-2.5 py-1 rounded">E-COMMERCE / MODA</span>
+                    <span class="text-xs font-semibold text-sand-800">Chile 🇨🇱</span>
+                </div>
+                <h3 class="text-lg font-bold text-sand-900">Carteras Amayra Chile</h3>
+                <p class="text-xs text-sand-800 leading-relaxed">
+                    Estrategia integral de Meta Ads, remarketing dinámico y catálogo de productos. Optimización de copies y creatividad para campañas de alto volumen de ventas de calzado y accesorios.
+                </p>
+                <div class="pt-2 flex flex-wrap gap-1.5 text-[10px] font-mono text-sand-800">
+                    <span class="bg-sand-100 px-2 py-0.5 rounded border border-sand-200">Catalog Ads</span>
+                    <span class="bg-sand-100 px-2 py-0.5 rounded border border-sand-200">Meta CAPI</span>
+                </div>
+            </div>
+
+            <!-- Cliente 2: Passline -->
+            <div class="project-card ecommerce bg-white p-6 rounded-lg border border-sand-200 card-shadow-hover space-y-4">
+                <div class="flex justify-between items-start">
+                    <span class="text-[11px] font-mono font-bold text-sage bg-sage-light px-2.5 py-1 rounded">TICKETING / EVENTOS</span>
+                    <span class="text-xs font-semibold text-sand-800">Agencia Hembra</span>
+                </div>
+                <h3 class="text-lg font-bold text-sand-900">Passline Argentina</h3>
+                <p class="text-xs text-sand-800 leading-relaxed">
+                    Campañas de venta masiva de entradas para eventos y shows. Aislamiento de métricas de conversión y optimización de presupuesto publicitario bajo picos de demanda masiva.
+                </p>
+                <div class="pt-2 flex flex-wrap gap-1.5 text-[10px] font-mono text-sand-800">
+                    <span class="bg-sand-100 px-2 py-0.5 rounded border border-sand-200">Venta Entradas</span>
+                    <span class="bg-sand-100 px-2 py-0.5 rounded border border-sand-200">Lanzamientos</span>
+                </div>
+            </div>
+
+            <!-- Cliente 3: PSI Integrales -->
+            <div class="project-card servicios bg-white p-6 rounded-lg border border-sand-200 card-shadow-hover space-y-4">
+                <div class="flex justify-between items-start">
+                    <span class="text-[11px] font-mono font-bold text-terracotta bg-terracotta-light px-2.5 py-1 rounded">CURSOS ONLINE</span>
+                    <span class="text-xs font-semibold text-sand-800">Salud & Cuidado</span>
+                </div>
+                <h3 class="text-lg font-bold text-sand-900">PSI Cursos de Maternidad</h3>
+                <p class="text-xs text-sand-800 leading-relaxed">
+                    Estructura de pauta para captación de alumnas en cursos de asesoría en lactancia. Automatización de flujo a WhatsApp y formularios con alta tasa de respuesta.
+                </p>
+                <div class="pt-2 flex flex-wrap gap-1.5 text-[10px] font-mono text-sand-800">
+                    <span class="bg-sand-100 px-2 py-0.5 rounded border border-sand-200">Lead Generation</span>
+                    <span class="bg-sand-100 px-2 py-0.5 rounded border border-sand-200">WhatsApp Ads</span>
+                </div>
+            </div>
+
+            <!-- Cliente 4: Makana -->
+            <div class="project-card servicios bg-white p-6 rounded-lg border border-sand-200 card-shadow-hover space-y-4">
+                <div class="flex justify-between items-start">
+                    <span class="text-[11px] font-mono font-bold text-terracotta bg-terracotta-light px-2.5 py-1 rounded">B2B / AUDITORÍA</span>
+                    <span class="text-xs font-semibold text-sand-800">Prensa & RR.PP.</span>
+                </div>
+                <h3 class="text-lg font-bold text-sand-900">Makana Comunicación</h3>
+                <p class="text-xs text-sand-800 leading-relaxed">
+                    Auditoría profunda de la cuenta publicitaria durante escalamiento de $400k a $900k. Limpieza de atribución de conversión en Google Ads y Meta Ads para medir CPL real.
+                </p>
+                <div class="pt-2 flex flex-wrap gap-1.5 text-[10px] font-mono text-sand-800">
+                    <span class="bg-sand-100 px-2 py-0.5 rounded border border-sand-200">Auditoría GA4</span>
+                    <span class="bg-sand-100 px-2 py-0.5 rounded border border-sand-200">CPL Audit</span>
+                </div>
+            </div>
+
+            <!-- Cliente 5: Denise Vanni Cabañas -->
+            <div class="project-card asesoria bg-white p-6 rounded-lg border border-sand-200 card-shadow-hover space-y-4">
+                <div class="flex justify-between items-start">
+                    <span class="text-[11px] font-mono font-bold text-sand-800 bg-sand-200 px-2.5 py-1 rounded">TURISMO & HOSPEDAJE</span>
+                    <span class="text-xs font-semibold text-sand-800">Villa La Angostura</span>
+                </div>
+                <h3 class="text-lg font-bold text-sand-900">Denise Vanni Cabañas</h3>
+                <p class="text-xs text-sand-800 leading-relaxed">
+                    Asesoría 1 a 1 para recuperar el orden del Portafolio Comercial, reconfiguración de métodos de pago bloqueados y unificación de páginas de Facebook e Instagram.
+                </p>
+                <div class="pt-2 flex flex-wrap gap-1.5 text-[10px] font-mono text-sand-800">
+                    <span class="bg-sand-100 px-2 py-0.5 rounded border border-sand-200">Destrabe Business Mgr</span>
+                    <span class="bg-sand-100 px-2 py-0.5 rounded border border-sand-200">Pagos</span>
+                </div>
+            </div>
+
+            <!-- Cliente 6: Cancats Pet Store -->
+            <div class="project-card ecommerce bg-white p-6 rounded-lg border border-sand-200 card-shadow-hover space-y-4">
+                <div class="flex justify-between items-start">
+                    <span class="text-[11px] font-mono font-bold text-sage bg-sage-light px-2.5 py-1 rounded">PET SHOP / RETAIL</span>
+                    <span class="text-xs font-semibold text-sand-800">E-commerce</span>
+                </div>
+                <h3 class="text-lg font-bold text-sand-900">Cancats Pet Store</h3>
+                <p class="text-xs text-sand-800 leading-relaxed">
+                    Campañas de ventas directas a tienda online para productos de mascotas. Ajuste de públicos de alta intención de compra y ofertas de retención.
+                </p>
+                <div class="pt-2 flex flex-wrap gap-1.5 text-[10px] font-mono text-sand-800">
+                    <span class="bg-sand-100 px-2 py-0.5 rounded border border-sand-200">Sales Campaign</span>
+                    <span class="bg-sand-100 px-2 py-0.5 rounded border border-sand-200">Meta Ads</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- SECTION: OFERTA CLARA DE SERVICIOS Y PRECIOS -->
+    <section id="servicios" class="py-20 px-6 bg-sand-200/60 border-y border-sand-200">
+        <div class="max-w-6xl mx-auto space-y-12">
+            
+            <div class="text-center max-w-2xl mx-auto space-y-3">
+                <span class="text-xs font-mono font-bold text-terracotta uppercase tracking-wider">// SERVICIOS TRANSPARENTES</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-sand-900">3 Formas de trabajar juntas/os</h2>
+                <p class="text-sm text-sand-800">
+                    Sin contratos confusos ni cobros ocultos. Elegí el esquema que mejor responda a tu necesidad actual.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+
+                <!-- OPCIÓN 1: Asesoría de Destrabe / 1 a 1 -->
+                <div class="bg-white p-8 rounded-xl border border-sand-300 card-shadow flex flex-col justify-between space-y-6 relative">
+                    <div class="space-y-4">
+                        <div class="text-xs font-mono font-bold text-terracotta bg-terracotta-light px-3 py-1 rounded-full inline-block">
+                            SOLUCIÓN RÁPIDA
+                        </div>
+                        <h3 class="text-xl font-bold text-sand-900">Sesión 1 a 1 de Destrabe Técnico</h3>
+                        <p class="text-xs text-sand-800 leading-relaxed">
+                            Ideal si tenés problemas con permisos en Meta Business Manager, tarjetas rebotadas, cuentas publicitarias inhabilitadas o píxeles mal instalados.
+                        </p>
+                        <div class="py-2">
+                            <span class="text-3xl font-extrabold text-sand-900">$55 USD</span>
+                            <span class="text-xs text-sand-800 block mt-1">Sesión intensiva de 45 min por Meet + Grabación</span>
+                        </div>
+                        <ul class="space-y-2 text-xs text-sand-800 pt-2 border-t border-sand-200">
+                            <li class="flex items-center gap-2"><span class="text-terracotta font-bold">✓</span> Orden y traspaso de propiedad de cuentas</li>
+                            <li class="flex items-center gap-2"><span class="text-terracotta font-bold">✓</span> Revisión de métodos de pago e impuestos</li>
+                            <li class="flex items-center gap-2"><span class="text-terracotta font-bold">✓</span> Diagnóstico express de campañas activas</li>
+                        </ul>
+                    </div>
+                    <a href="https://cal.com/anita-osuna-olzm8m/45min" target="_blank" rel="noopener" class="w-full bg-sand-900 hover:bg-black text-white text-xs font-bold py-3.5 rounded-md text-center transition-all">
+                        AGENDAR SESIÓN 45 MIN →
+                    </a>
+                </div>
+
+                <!-- OPCIÓN 2: Gestión Mensual de Paid Media (DESTACADO) -->
+                <div class="bg-white p-8 rounded-xl border-2 border-terracotta card-shadow flex flex-col justify-between space-y-6 relative transform md:-translate-y-2">
+                    <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-terracotta text-white font-mono text-[10px] font-bold px-4 py-1 rounded-full uppercase tracking-wider">
+                        MÁS RECOMENDADO
+                    </div>
+                    <div class="space-y-4">
+                        <div class="text-xs font-mono font-bold text-sage bg-sage-light px-3 py-1 rounded-full inline-block">
+                            GESTIÓN INTEGRAL
+                        </div>
+                        <h3 class="text-xl font-bold text-sand-900">Gestión de Pauta Mensual (Meta / Google)</h3>
+                        <p class="text-xs text-sand-800 leading-relaxed">
+                            Me encargo del 100% de la estrategia, creación de campañas, redacción de anuncios (copywriting), segmentación y optimización continua.
+                        </p>
+                        <div class="py-2">
+                            <span class="text-3xl font-extrabold text-sand-900">$250 USD <span class="text-xs font-normal text-sand-800">/ mes</span></span>
+                            <span class="text-xs text-sand-800 block mt-1">Para 1 red (Meta Ads o Google Ads)</span>
+                            <span class="text-xs text-terracotta font-semibold block mt-0.5">* $650 USD/mes para Meta + Google completo</span>
+                        </div>
+                        <ul class="space-y-2 text-xs text-sand-800 pt-2 border-t border-sand-200">
+                            <li class="flex items-center gap-2"><span class="text-terracotta font-bold">✓</span> Estrategia de embudo completo (Frío, Warm, Hot)</li>
+                            <li class="flex items-center gap-2"><span class="text-terracotta font-bold">✓</span> Copys persuasivos y briefs para diseño</li>
+                            <li class="flex items-center gap-2"><span class="text-terracotta font-bold">✓</span> Reportes semanales y atención por WhatsApp</li>
+                        </ul>
+                    </div>
+                    <a href="#contacto" class="w-full bg-terracotta hover:bg-terracotta-hover text-white text-xs font-bold py-3.5 rounded-md text-center transition-all shadow-sm">
+                        CONSULTAR DISPONIBILIDAD →
+                    </a>
+                </div>
+
+                <!-- OPCIÓN 3: Auditoría & Setup -->
+                <div class="bg-white p-8 rounded-xl border border-sand-300 card-shadow flex flex-col justify-between space-y-6 relative">
+                    <div class="space-y-4">
+                        <div class="text-xs font-mono font-bold text-sand-800 bg-sand-200 px-3 py-1 rounded-full inline-block">
+                            EVALUACIÓN DE CUENTA
+                        </div>
+                        <h3 class="text-xl font-bold text-sand-900">Auditoría de Pauta & Atribución</h3>
+                        <p class="text-xs text-sand-800 leading-relaxed">
+                            Analizo a fondo tus campañas actuales, la medición de conversiones y tus landing pages para decirte exactamente por dónde estás perdiendo presupuesto.
+                        </p>
+                        <div class="py-2">
+                            <span class="text-3xl font-extrabold text-sand-900">A cotizar</span>
+                            <span class="text-xs text-sand-800 block mt-1">Entrega de informe escrito + Presentación</span>
+                        </div>
+                        <ul class="space-y-2 text-xs text-sand-800 pt-2 border-t border-sand-200">
+                            <li class="flex items-center gap-2"><span class="text-terracotta font-bold">✓</span> Auditoría de palabras clave y términos de búsqueda</li>
+                            <li class="flex items-center gap-2"><span class="text-terracotta font-bold">✓</span> Verificación de propiedad en GA4 / GTM</li>
+                            <li class="flex items-center gap-2"><span class="text-terracotta font-bold">✓</span> Plan de acción claro para escalar en el Q3/Q4</li>
+                        </ul>
+                    </div>
+                    <a href="#contacto" class="w-full bg-white border border-sand-800 text-sand-900 hover:bg-sand-100 text-xs font-bold py-3.5 rounded-md text-center transition-all">
+                        PEDIR AUDITORÍA →
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- SECTION: POR QUÉ CONTRATARME / MI DIFERENCIAL -->
+    <section id="por-que-yo" class="py-20 px-6 max-w-6xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-12 items-center">
+            
+            <div class="space-y-6">
+                <span class="text-xs font-mono font-bold text-terracotta uppercase tracking-wider">// LA DIFERENCIA REAL</span>
+                <h2 class="text-3xl sm:text-4xl font-extrabold text-sand-900">
+                    No soy una agencia fantasma ni un bot que sube anuncios.
+                </h2>
+                <p class="text-sm text-sand-800 leading-relaxed">
+                    Muchas agencias delegan tus campañas en juniors o se quedan con la propiedad de tus cuentas. Mi filosofía de trabajo es 100% transparente:
+                </p>
+
+                <div class="space-y-4 pt-2">
+                    <div class="flex gap-4 items-start">
+                        <div class="w-8 h-8 rounded bg-terracotta-light text-terracotta font-bold flex items-center justify-center flex-shrink-0 text-sm">1</div>
+                        <div>
+                            <h4 class="font-bold text-sand-900 text-sm">Tus cuentas son tuyas para siempre</h4>
+                            <p class="text-xs text-sand-800 mt-0.5">Todo el historial, los píxeles y las audiencias quedan alojados en tu propio Business Manager. Nunca "rehenes" de un proveedor.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 items-start">
+                        <div class="w-8 h-8 rounded bg-terracotta-light text-terracotta font-bold flex items-center justify-center flex-shrink-0 text-sm">2</div>
+                        <div>
+                            <h4 class="font-bold text-sand-900 text-sm">Criterio de negocio, no solo "clics"</h4>
+                            <p class="text-xs text-sand-800 mt-0.5">Mido el impacto en ventas reales, costo por adquisición (CPA) y margen. Un anuncio con miles de "me gusta" que no vende no me sirve.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 items-start">
+                        <div class="w-8 h-8 rounded bg-terracotta-light text-terracotta font-bold flex items-center justify-center flex-shrink-0 text-sm">3</div>
+                        <div>
+                            <h4 class="font-bold text-sand-900 text-sm">Soporte directo por WhatsApp</h4>
+                            <p class="text-xs text-sand-800 mt-0.5">Hablás directamente conmigo. Sin intermediarios ni ejecutivos de cuenta que no entienden cómo funciona la pauta.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-sand-50 border border-sand-200 p-8 rounded-xl space-y-6">
+                <h3 class="font-bold text-sand-900 text-lg">Mi Formación y Experiencia</h3>
+                
+                <div class="space-y-4 text-xs">
+                    <div class="border-l-2 border-terracotta pl-4 py-1">
+                        <span class="font-mono text-sand-800 text-[11px]">2019 — PRESENTE</span>
+                        <h4 class="font-bold text-sand-900 text-sm">Ads Manager Freelance & Consultora</h4>
+                        <p class="text-sand-800">Gestión directa con más de 20 marcas independientes y agencias en Argentina, Chile y la región.</p>
+                    </div>
+
+                    <div class="border-l-2 border-sand-300 pl-4 py-1">
+                        <span class="font-mono text-sand-800 text-[11px]">2021 — 2024</span>
+                        <h4 class="font-bold text-sand-900 text-sm">Analista de Medios en Agencias (Hembra, Impresa)</h4>
+                        <p class="text-sand-800">Manejo de presupuestos publicitarios de alto volumen para eventos masivos y e-commerce.</p>
+                    </div>
+
+                    <div class="border-l-2 border-sand-300 pl-4 py-1">
+                        <span class="font-mono text-sand-800 text-[11px]">2019 — 2022</span>
+                        <h4 class="font-bold text-sand-900 text-sm">Ecodiem Academy</h4>
+                        <p class="text-sand-800">Especialización en Facebook Ads Expert, Copywriting y Estrategia de Marketing Digital.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- SECTION CONTACTO Y FOOTER -->
+    <section id="contacto" class="py-20 px-6 bg-sand-900 text-white">
+        <div class="max-w-4xl mx-auto text-center space-y-8">
+            <span class="text-xs font-mono font-bold text-terracotta uppercase tracking-wider">// EMPECEMOS HOY</span>
+            <h2 class="text-3xl sm:text-5xl font-extrabold font-serif italic">¿Hablamos de tu pauta publicitaria?</h2>
+            <p class="text-sand-300 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
+                Escribime a mi correo o mandame un mensaje directo por WhatsApp. Contame qué producto o servicio vendés y lo revisamos juntos.
+            </p>
+
+            <div class="pt-4 flex flex-col sm:flex-row justify-center gap-4 text-sm font-bold">
+                <a href="https://wa.me/543412790950" target="_blank" rel="noopener" class="bg-terracotta hover:bg-terracotta-hover text-white px-8 py-4 rounded-md transition-all flex items-center justify-center gap-2">
+                    <span>💬</span> HABLAR POR WHATSAPP (+54 341 2790950)
+                </a>
+                <a href="mailto:anitaosuna67@gmail.com" class="bg-white/10 hover:bg-white/20 text-white border border-white/20 px-8 py-4 rounded-md transition-all">
+                    ENVIAR CORREO ELECTRÓNICO
+                </a>
+            </div>
+
+            <div class="pt-12 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center text-xs text-sand-300 font-mono gap-4">
+                <div>Ana Osuna — Performance Marketing & Growth Specialist</div>
+                <div class="flex gap-4">
+                    <a href="https://linkedin.com/in/anitaosuna" target="_blank" class="hover:text-terracotta transition-colors">LinkedIn</a>
+                    <span>•</span>
+                    <a href="mailto:anitaosuna67@gmail.com" class="hover:text-terracotta transition-colors">anitaosuna67@gmail.com</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- JS Filtro Simple para la Galería de Clientes -->
+    <script>
+        function filterProjects(category) {
+            const cards = document.querySelectorAll('.project-card');
+            const buttons = document.querySelectorAll('.filter-btn');
+
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-sand-900', 'text-white');
+                btn.classList.add('bg-white', 'text-sand-800', 'border-sand-300');
+            });
+
+            event.target.classList.remove('bg-white', 'text-sand-800', 'border-sand-300');
+            event.target.classList.add('bg-sand-900', 'text-white');
+
+            cards.forEach(card => {
+                if (category === 'all' || card.classList.contains(category)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

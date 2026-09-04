@@ -1,0 +1,259 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 700px;
+                 background-color: #0b0f19;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+             #loadingBar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width: 100%;
+                 height: 700px;
+                 background-color:rgba(200,200,200,0.8);
+                 -webkit-transition: all 0.5s ease;
+                 -moz-transition: all 0.5s ease;
+                 -ms-transition: all 0.5s ease;
+                 -o-transition: all 0.5s ease;
+                 transition: all 0.5s ease;
+                 opacity:1;
+             }
+
+             #bar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width:20px;
+                 height:20px;
+                 margin:auto auto auto auto;
+                 border-radius:11px;
+                 border:2px solid rgba(30,30,30,0.05);
+                 background: rgb(0, 173, 246); /* Old browsers */
+                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+             }
+
+             #border {
+                 position:absolute;
+                 top:10px;
+                 left:10px;
+                 width:500px;
+                 height:23px;
+                 margin:auto auto auto auto;
+                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+                 border-radius:10px;
+             }
+
+             #text {
+                 position:absolute;
+                 top:8px;
+                 left:530px;
+                 width:30px;
+                 height:50px;
+                 margin:auto auto auto auto;
+                 font-size:22px;
+                 color: #000000;
+             }
+
+             div.outerBorder {
+                 position:relative;
+                 top:400px;
+                 width:600px;
+                 height:44px;
+                 margin:auto auto auto auto;
+                 border:8px solid rgba(0,0,0,0.1);
+                 background: rgb(252,252,252); /* Old browsers */
+                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                 border-radius:72px;
+                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+             }
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+            <div id="loadingBar">
+              <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                  <div id="bar"></div>
+                </div>
+              </div>
+            </div>
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#e11d48", "font": {"color": "white"}, "id": "C0_IZQUIERDA (Caos)", "label": "C0_IZQUIERDA (Caos)", "shape": "dot", "size": 65, "title": "\ud83e\udde0 MOTOR MATRIZ: IZQUIERDA (Caos)"}, {"color": "#f43f5e", "font": {"color": "white"}, "id": "R_SMOL_ARISTEROS", "label": "R_SMOL_ARISTEROS", "shape": "dot", "size": 40, "title": "\ud83d\udc41\ufe0f Ra\u00edz Operativa: SMOL_ARISTEROS\nDef: Caos y Rebeli\u00f3n"}, {"color": "#fb7185", "font": {"color": "white"}, "id": "R_YADA_GINOSKO", "label": "R_YADA_GINOSKO", "shape": "dot", "size": 40, "title": "\ud83d\udc41\ufe0f Ra\u00edz Operativa: YADA_GINOSKO\nDef: Asimilaci\u00f3n"}, {"color": "\ud83e\uddec", "font": {"color": "white"}, "id": "I_CRISPR-Cas9 / Edici\u00f3n Gen\u00e9tica", "label": "I_CRISPR-Cas9 / Edici\u00f3n Gen\u00e9tica", "shape": "dot", "size": 24, "title": "#f59e0b CRISPR-Cas9 / Edici\u00f3n Gen\u00e9tica\nDetalle: Modificaci\u00f3n de la cadena de ADN"}, {"color": "\ud83e\uddec", "font": {"color": "white"}, "id": "I_Neuralink / Interfaz Cerebro", "label": "I_Neuralink / Interfaz Cerebro", "shape": "dot", "size": 24, "title": "#f59e0b Neuralink / Interfaz Cerebro\nDetalle: Inyecci\u00f3n de electrodos neuronales"}, {"color": "\ud83e\uddec", "font": {"color": "white"}, "id": "I_EctoLife / \u00dateros Artificiales", "label": "I_EctoLife / \u00dateros Artificiales", "shape": "dot", "size": 24, "title": "#f59e0b EctoLife / \u00dateros Artificiales\nDetalle: Gestaci\u00f3n extracorp\u00f3rea por IA"}, {"color": "\ud83e\uddec", "font": {"color": "white"}, "id": "I_Biolog\u00eda Sint\u00e9tica / ARNm", "label": "I_Biolog\u00eda Sint\u00e9tica / ARNm", "shape": "dot", "size": 24, "title": "#f59e0b Biolog\u00eda Sint\u00e9tica / ARNm\nDetalle: Programaci\u00f3n de instrucciones celulares"}, {"color": "\ud83e\uddec", "font": {"color": "white"}, "id": "I_Quimeras Humano-Animal", "label": "I_Quimeras Humano-Animal", "shape": "dot", "size": 24, "title": "#f59e0b Quimeras Humano-Animal\nDetalle: Inyecci\u00f3n de c\u00e9lulas madre en blastocistos"}, {"color": "\ud83e\uddec", "font": {"color": "white"}, "id": "I_Carne de Cultivo Celular", "label": "I_Carne de Cultivo Celular", "shape": "dot", "size": 24, "title": "#f59e0b Carne de Cultivo Celular\nDetalle: Proliferaci\u00f3n in vitro de miocitos"}, {"color": "\ud83e\uddec", "font": {"color": "white"}, "id": "I_Nanotecnolog\u00eda Lip\u00eddica", "label": "I_Nanotecnolog\u00eda Lip\u00eddica", "shape": "dot", "size": 24, "title": "#f59e0b Nanotecnolog\u00eda Lip\u00eddica\nDetalle: Vectores autoensamblados intracelulares"}, {"color": "\u23f3", "font": {"color": "white"}, "id": "I_Retorno de Plut\u00f3n", "label": "I_Retorno de Plut\u00f3n", "shape": "dot", "size": 24, "title": "#0ea5e9 Retorno de Plut\u00f3n\nDetalle: Colapso del orden material establecido y mutaci\u00f3n violenta del sistema."}, {"color": "\u23f3", "font": {"color": "white"}, "id": "I_Ciclos Saros (Eclipses)", "label": "I_Ciclos Saros (Eclipses)", "shape": "dot", "size": 24, "title": "#0ea5e9 Ciclos Saros (Eclipses)\nDetalle: Puntos de inflexi\u00f3n donde se introduce ruido en el c\u00f3digo o se resetean acuerdos."}, {"color": "\u23f3", "font": {"color": "white"}, "id": "I_M\u00ednimo de Maunder (Ciclo Solar)", "label": "I_M\u00ednimo de Maunder (Ciclo Solar)", "shape": "dot", "size": 24, "title": "#0ea5e9 M\u00ednimo de Maunder (Ciclo Solar)\nDetalle: Estr\u00e9s t\u00e9rmico y biol\u00f3gico que desestabiliza las cosechas, induciendo caos social y revueltas."}, {"color": "\u23f3", "font": {"color": "white"}, "id": "I_Tr\u00e1nsito de Urano por Tauro", "label": "I_Tr\u00e1nsito de Urano por Tauro", "shape": "dot", "size": 24, "title": "#0ea5e9 Tr\u00e1nsito de Urano por Tauro\nDetalle: Disrupci\u00f3n radical de las estructuras de valor material y aceleraci\u00f3n tecnol\u00f3gica imprevista."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Apocalipsis 10:2", "label": "V_Apocalipsis 10:2", "shape": "dot", "size": 8, "title": "Texto: Y puso su pie derecho sobre el mar, y el izquierdo sobre la tierra......"}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Mateo 25:33", "label": "V_Mateo 25:33", "shape": "dot", "size": 8, "title": "Texto: Y pondr\u00e1 las ovejas a su derecha, y los cabritos a su izquierda...."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Mateo 25:41", "label": "V_Mateo 25:41", "shape": "dot", "size": 8, "title": "Texto: Entonces dir\u00e1 tambi\u00e9n a los de la izquierda: Apartaos de m\u00ed......"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Rey Bael", "label": "H_Rey Bael", "shape": "dot", "size": 20, "title": "Rey Bael\nTropas (Leg): 66\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Marqu\u00e9s Vassago", "label": "H_Marqu\u00e9s Vassago", "shape": "dot", "size": 12, "title": "Marqu\u00e9s Vassago\nTropas (Leg): 70\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Marqu\u00e9s Marbas", "label": "H_Marqu\u00e9s Marbas", "shape": "dot", "size": 12, "title": "Marqu\u00e9s Marbas\nTropas (Leg): 74\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Marqu\u00e9s Amon", "label": "H_Marqu\u00e9s Amon", "shape": "dot", "size": 12, "title": "Marqu\u00e9s Amon\nTropas (Leg): 78\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Marqu\u00e9s Paimon", "label": "H_Marqu\u00e9s Paimon", "shape": "dot", "size": 12, "title": "Marqu\u00e9s Paimon\nTropas (Leg): 82\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Rey Gusion", "label": "H_Rey Gusion", "shape": "dot", "size": 20, "title": "Rey Gusion\nTropas (Leg): 86\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Marqu\u00e9s Beleth", "label": "H_Marqu\u00e9s Beleth", "shape": "dot", "size": 12, "title": "Marqu\u00e9s Beleth\nTropas (Leg): 90\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Marqu\u00e9s Eligos", "label": "H_Marqu\u00e9s Eligos", "shape": "dot", "size": 12, "title": "Marqu\u00e9s Eligos\nTropas (Leg): 94\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Marqu\u00e9s Botis", "label": "H_Marqu\u00e9s Botis", "shape": "dot", "size": 12, "title": "Marqu\u00e9s Botis\nTropas (Leg): 98\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Marqu\u00e9s Sallos", "label": "H_Marqu\u00e9s Sallos", "shape": "dot", "size": 12, "title": "Marqu\u00e9s Sallos\nTropas (Leg): 102\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Rey Marax", "label": "H_Rey Marax", "shape": "dot", "size": 20, "title": "Rey Marax\nTropas (Leg): 106\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Marqu\u00e9s Aim", "label": "H_Marqu\u00e9s Aim", "shape": "dot", "size": 12, "title": "Marqu\u00e9s Aim\nTropas (Leg): 110\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Marqu\u00e9s Glasya-Labolas", "label": "H_Marqu\u00e9s Glasya-Labolas", "shape": "dot", "size": 12, "title": "Marqu\u00e9s Glasya-Labolas\nTropas (Leg): 114\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Marqu\u00e9s Ronove", "label": "H_Marqu\u00e9s Ronove", "shape": "dot", "size": 12, "title": "Marqu\u00e9s Ronove\nTropas (Leg): 118\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Marqu\u00e9s Astaroth", "label": "H_Marqu\u00e9s Astaroth", "shape": "dot", "size": 12, "title": "Marqu\u00e9s Astaroth\nTropas (Leg): 122\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Rey Foras", "label": "H_Rey Foras", "shape": "dot", "size": 20, "title": "Rey Foras\nTropas (Leg): 126\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Marqu\u00e9s Gaap", "label": "H_Marqu\u00e9s Gaap", "shape": "dot", "size": 12, "title": "Marqu\u00e9s Gaap\nTropas (Leg): 130\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Marqu\u00e9s Marchosias", "label": "H_Marqu\u00e9s Marchosias", "shape": "dot", "size": 12, "title": "Marqu\u00e9s Marchosias\nTropas (Leg): 134\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Marqu\u00e9s Phenex", "label": "H_Marqu\u00e9s Phenex", "shape": "dot", "size": 12, "title": "Marqu\u00e9s Phenex\nTropas (Leg): 138\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Marqu\u00e9s Malphas", "label": "H_Marqu\u00e9s Malphas", "shape": "dot", "size": 12, "title": "Marqu\u00e9s Malphas\nTropas (Leg): 142\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Rey Focalor", "label": "H_Rey Focalor", "shape": "dot", "size": 20, "title": "Rey Focalor\nTropas (Leg): 146\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Marqu\u00e9s Sabnock", "label": "H_Marqu\u00e9s Sabnock", "shape": "dot", "size": 12, "title": "Marqu\u00e9s Sabnock\nTropas (Leg): 150\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Marqu\u00e9s Vine", "label": "H_Marqu\u00e9s Vine", "shape": "dot", "size": 12, "title": "Marqu\u00e9s Vine\nTropas (Leg): 154\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Marqu\u00e9s Uvall", "label": "H_Marqu\u00e9s Uvall", "shape": "dot", "size": 12, "title": "Marqu\u00e9s Uvall\nTropas (Leg): 158\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Marqu\u00e9s Crocell", "label": "H_Marqu\u00e9s Crocell", "shape": "dot", "size": 12, "title": "Marqu\u00e9s Crocell\nTropas (Leg): 162\nOperador Lemegeton"}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Daniel 12:7", "label": "V_Daniel 12:7", "shape": "dot", "size": 8, "title": "Texto: Then I heard the figure clothed in linen, who was above the water of the river, ..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Deuteronomy 5:29", "label": "V_Deuteronomy 5:29", "shape": "dot", "size": 8, "title": "Texto: Be careful, then, to do as the ETERNAL your God has commanded you. Do not turn a..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Deuteronomy 17:11", "label": "V_Deuteronomy 17:11", "shape": "dot", "size": 8, "title": "Texto: You shall act in accordance with the instructions given you and the ruling hande..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Ecclesiastes 10:2", "label": "V_Ecclesiastes 10:2", "shape": "dot", "size": 8, "title": "Texto: A sage\u2019s mind tends toward the right hand, a fool\u2019s toward the left.bI.e., a sag..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Exodus 14:22", "label": "V_Exodus 14:22", "shape": "dot", "size": 8, "title": "Texto: and the Israelites went into the sea on dry ground, the waters forming a wall fo..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Exodus 14:29", "label": "V_Exodus 14:29", "shape": "dot", "size": 8, "title": "Texto: But the Israelites had marched through the sea on dry ground, the waters forming..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Ezekiel 4:4", "label": "V_Ezekiel 4:4", "shape": "dot", "size": 8, "title": "Texto: \u201cThen lie on your left side, and let it bear the punishment of the House of Isra..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Genesis 13:9", "label": "V_Genesis 13:9", "shape": "dot", "size": 8, "title": "Texto: Is not the whole land before you? Let us separate:aLet us separate Lit. \u201cPlease ..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Genesis 14:15", "label": "V_Genesis 14:15", "shape": "dot", "size": 8, "title": "Texto: At night, he and his servants deployed against them and defeated them; and he pu..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Genesis 24:49", "label": "V_Genesis 24:49", "shape": "dot", "size": 8, "title": "Texto: And now, if you mean to treat my master with true kindness, tell me; and if not,..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Genesis 48:13", "label": "V_Genesis 48:13", "shape": "dot", "size": 8, "title": "Texto: Joseph took the two of them, Ephraim with his right hand\u2014to Israel\u2019s left\u2014and Ma..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Genesis 48:14", "label": "V_Genesis 48:14", "shape": "dot", "size": 8, "title": "Texto: But Israel stretched out his right hand and laid it on Ephraim\u2019s head, though he..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_II_Chronicles 3:17", "label": "V_II_Chronicles 3:17", "shape": "dot", "size": 8, "title": "Texto: He erected the columns in front of the Great Hall, one to its right and one to i..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_II_Chronicles 18:18", "label": "V_II_Chronicles 18:18", "shape": "dot", "size": 8, "title": "Texto: Then [Micaiah] said, \u201cIndeed, hear now the word of GOD! I saw GOD seated upon a ..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_II_Chronicles 23:10", "label": "V_II_Chronicles 23:10", "shape": "dot", "size": 8, "title": "Texto: He stationed the entire force, each with his weapon at the ready, from the south..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_II_Kings 11:11", "label": "V_II_Kings 11:11", "shape": "dot", "size": 8, "title": "Texto: The guards, with their arms at the ready, stationed themselves\u2014from the south en..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_II_Samuel 2:21", "label": "V_II_Samuel 2:21", "shape": "dot", "size": 8, "title": "Texto: Abner said to him, \u201cTurn to the right or to the left, and seize one of our boys ..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_II_Samuel 16:6", "label": "V_II_Samuel 16:6", "shape": "dot", "size": 8, "title": "Texto: He threw stones at David and all King David\u2019s courtiers, while all the troops an..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_I_Chronicles 12:2", "label": "V_I_Chronicles 12:2", "shape": "dot", "size": 8, "title": "Texto: they were armed with the bow and could use both right hand and left hand to slin..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_I_Kings 7:21", "label": "V_I_Kings 7:21", "shape": "dot", "size": 8, "title": "Texto: He set up the columns at the portico of the Great Hall; he set up one column on ..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_I_Kings 7:39", "label": "V_I_Kings 7:39", "shape": "dot", "size": 8, "title": "Texto: He disposed the laver stands, five at the right side of the House and five at it..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_I_Kings 22:19", "label": "V_I_Kings 22:19", "shape": "dot", "size": 8, "title": "Texto: But [Micaiah] said, \u201cI call upon you to hear the word of GOD! I saw GOD seated u..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Joshua 19:27", "label": "V_Joshua 19:27", "shape": "dot", "size": 8, "title": "Texto: It also ranfIt also ran From Helkath, v. 25. along the east side to Beth-dagon, ..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Judges 3:21", "label": "V_Judges 3:21", "shape": "dot", "size": 8, "title": "Texto: Reaching with his left hand, Ehud drew the dagger from his right side and drove ..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Judges 16:29", "label": "V_Judges 16:29", "shape": "dot", "size": 8, "title": "Texto: He embraced the two middle pillars that the temple rested upon, one with his rig..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Leviticus 14:15", "label": "V_Leviticus 14:15", "shape": "dot", "size": 8, "title": "Texto: The priest shall then take some of the log of oil and pour it into the palm of h..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Leviticus 14:16", "label": "V_Leviticus 14:16", "shape": "dot", "size": 8, "title": "Texto: And the priest shall dip his right finger in the oil that is in the palm of his ..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Leviticus 14:26", "label": "V_Leviticus 14:26", "shape": "dot", "size": 8, "title": "Texto: The priest shall then pour some of the oil into the palm of his own left hand, ..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Leviticus 14:27", "label": "V_Leviticus 14:27", "shape": "dot", "size": 8, "title": "Texto: and with the finger of his right hand the priest shall sprinkle some of the oil ..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Nehemiah 8:4", "label": "V_Nehemiah 8:4", "shape": "dot", "size": 8, "title": "Texto: Ezra the scribe stood upon a wooden tower made for the purpose, and beside him s..."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Song_of_Songs 2:6", "label": "V_Song_of_Songs 2:6", "shape": "dot", "size": 8, "title": "Texto: His left hand was under my head,His right arm embraced me...."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Song_of_Songs 8:3", "label": "V_Song_of_Songs 8:3", "shape": "dot", "size": 8, "title": "Texto: His left hand was under my head,His right hand caressed me...."}, {"color": "#334155", "font": {"color": "white"}, "id": "V_Zechariah 4:3", "label": "V_Zechariah 4:3", "shape": "dot", "size": 8, "title": "Texto: and by it are two olive trees, one on the right of the bowl and one on its left...."}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Agares", "label": "H_Duque Agares", "shape": "dot", "size": 12, "title": "Duque Agares\nTropas (Leg): 68\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Samigina", "label": "H_Duque Samigina", "shape": "dot", "size": 12, "title": "Duque Samigina\nTropas (Leg): 72\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Valefor", "label": "H_Duque Valefor", "shape": "dot", "size": 12, "title": "Duque Valefor\nTropas (Leg): 76\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Barbatos", "label": "H_Duque Barbatos", "shape": "dot", "size": 12, "title": "Duque Barbatos\nTropas (Leg): 80\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Buer", "label": "H_Duque Buer", "shape": "dot", "size": 12, "title": "Duque Buer\nTropas (Leg): 84\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Sitri", "label": "H_Duque Sitri", "shape": "dot", "size": 12, "title": "Duque Sitri\nTropas (Leg): 88\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Leraje", "label": "H_Duque Leraje", "shape": "dot", "size": 12, "title": "Duque Leraje\nTropas (Leg): 92\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Zepar", "label": "H_Duque Zepar", "shape": "dot", "size": 12, "title": "Duque Zepar\nTropas (Leg): 96\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Bathin", "label": "H_Duque Bathin", "shape": "dot", "size": 12, "title": "Duque Bathin\nTropas (Leg): 100\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Purson", "label": "H_Duque Purson", "shape": "dot", "size": 12, "title": "Duque Purson\nTropas (Leg): 104\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Ipos", "label": "H_Duque Ipos", "shape": "dot", "size": 12, "title": "Duque Ipos\nTropas (Leg): 108\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Naberius", "label": "H_Duque Naberius", "shape": "dot", "size": 12, "title": "Duque Naberius\nTropas (Leg): 112\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Bune", "label": "H_Duque Bune", "shape": "dot", "size": 12, "title": "Duque Bune\nTropas (Leg): 116\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Berith", "label": "H_Duque Berith", "shape": "dot", "size": 12, "title": "Duque Berith\nTropas (Leg): 120\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Forneus", "label": "H_Duque Forneus", "shape": "dot", "size": 12, "title": "Duque Forneus\nTropas (Leg): 124\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Asmoday", "label": "H_Duque Asmoday", "shape": "dot", "size": 12, "title": "Duque Asmoday\nTropas (Leg): 128\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Furfur", "label": "H_Duque Furfur", "shape": "dot", "size": 12, "title": "Duque Furfur\nTropas (Leg): 132\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Stolas", "label": "H_Duque Stolas", "shape": "dot", "size": 12, "title": "Duque Stolas\nTropas (Leg): 136\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Halphas", "label": "H_Duque Halphas", "shape": "dot", "size": 12, "title": "Duque Halphas\nTropas (Leg): 140\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Raum", "label": "H_Duque Raum", "shape": "dot", "size": 12, "title": "Duque Raum\nTropas (Leg): 144\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Vepar", "label": "H_Duque Vepar", "shape": "dot", "size": 12, "title": "Duque Vepar\nTropas (Leg): 148\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Shax", "label": "H_Duque Shax", "shape": "dot", "size": 12, "title": "Duque Shax\nTropas (Leg): 152\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Bifrons", "label": "H_Duque Bifrons", "shape": "dot", "size": 12, "title": "Duque Bifrons\nTropas (Leg): 156\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Haagenti", "label": "H_Duque Haagenti", "shape": "dot", "size": 12, "title": "Duque Haagenti\nTropas (Leg): 160\nOperador Lemegeton"}, {"color": "#8b5cf6", "font": {"color": "white"}, "id": "H_Duque Furcas", "label": "H_Duque Furcas", "shape": "dot", "size": 12, "title": "Duque Furcas\nTropas (Leg): 164\nOperador Lemegeton"}, {"color": "#ef4444", "font": {"color": "white"}, "id": "O_H_Duque Agares_0", "label": "O_H_Duque Agares_0", "shape": "dot", "size": 14, "title": "TIEMPO REAL (Agares):\nVuelve a suceder: hackean redes de Semovi CDMX y exhiben a trabajadores por presunta corrupci\u00f3n - Infobae"}, {"color": "#ef4444", "font": {"color": "white"}, "id": "O_H_Duque Agares_1", "label": "O_H_Duque Agares_1", "shape": "dot", "size": 14, "title": "TIEMPO REAL (Agares):\nVicecontralor denuncia hackeo de celular y entrampamiento en su contra: \u201cBuscan testigos falsos\u201d - Blu Radio"}, {"color": "#ef4444", "font": {"color": "white"}, "id": "O_H_Duque Leraje_0", "label": "O_H_Duque Leraje_0", "shape": "dot", "size": 14, "title": "TIEMPO REAL (Leraje):\nVuelve a suceder: hackean redes de Semovi CDMX y exhiben a trabajadores por presunta corrupci\u00f3n - Infobae"}, {"color": "#ef4444", "font": {"color": "white"}, "id": "O_H_Duque Leraje_1", "label": "O_H_Duque Leraje_1", "shape": "dot", "size": 14, "title": "TIEMPO REAL (Leraje):\nVicecontralor denuncia hackeo de celular y entrampamiento en su contra: \u201cBuscan testigos falsos\u201d - Blu Radio"}, {"color": "#ef4444", "font": {"color": "white"}, "id": "O_H_Duque Bifrons_0", "label": "O_H_Duque Bifrons_0", "shape": "dot", "size": 14, "title": "TIEMPO REAL (Bifrons):\nVuelve a suceder: hackean redes de Semovi CDMX y exhiben a trabajadores por presunta corrupci\u00f3n - Infobae"}, {"color": "#ef4444", "font": {"color": "white"}, "id": "O_H_Duque Bifrons_1", "label": "O_H_Duque Bifrons_1", "shape": "dot", "size": 14, "title": "TIEMPO REAL (Bifrons):\nVicecontralor denuncia hackeo de celular y entrampamiento en su contra: \u201cBuscan testigos falsos\u201d - Blu Radio"}]);
+                  edges = new vis.DataSet([{"from": "C0_IZQUIERDA (Caos)", "to": "R_SMOL_ARISTEROS", "width": 6}, {"from": "C0_IZQUIERDA (Caos)", "to": "R_YADA_GINOSKO", "width": 6}, {"from": "C0_IZQUIERDA (Caos)", "to": "I_CRISPR-Cas9 / Edici\u00f3n Gen\u00e9tica", "width": 1}, {"from": "C0_IZQUIERDA (Caos)", "to": "I_Neuralink / Interfaz Cerebro", "width": 1}, {"from": "C0_IZQUIERDA (Caos)", "to": "I_EctoLife / \u00dateros Artificiales", "width": 1}, {"from": "C0_IZQUIERDA (Caos)", "to": "I_Biolog\u00eda Sint\u00e9tica / ARNm", "width": 1}, {"from": "C0_IZQUIERDA (Caos)", "to": "I_Quimeras Humano-Animal", "width": 1}, {"from": "C0_IZQUIERDA (Caos)", "to": "I_Carne de Cultivo Celular", "width": 1}, {"from": "C0_IZQUIERDA (Caos)", "to": "I_Nanotecnolog\u00eda Lip\u00eddica", "width": 1}, {"from": "C0_IZQUIERDA (Caos)", "to": "I_Retorno de Plut\u00f3n", "width": 1}, {"from": "C0_IZQUIERDA (Caos)", "to": "I_Ciclos Saros (Eclipses)", "width": 1}, {"from": "C0_IZQUIERDA (Caos)", "to": "I_M\u00ednimo de Maunder (Ciclo Solar)", "width": 1}, {"from": "C0_IZQUIERDA (Caos)", "to": "I_Tr\u00e1nsito de Urano por Tauro", "width": 1}, {"from": "C0_IZQUIERDA (Caos)", "to": "V_Apocalipsis 10:2", "width": 0.1}, {"from": "C0_IZQUIERDA (Caos)", "to": "V_Mateo 25:33", "width": 0.1}, {"from": "C0_IZQUIERDA (Caos)", "to": "V_Mateo 25:41", "width": 0.1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Rey Bael", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Marqu\u00e9s Vassago", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Marqu\u00e9s Marbas", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Marqu\u00e9s Amon", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Marqu\u00e9s Paimon", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Rey Gusion", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Marqu\u00e9s Beleth", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Marqu\u00e9s Eligos", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Marqu\u00e9s Botis", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Marqu\u00e9s Sallos", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Rey Marax", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Marqu\u00e9s Aim", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Marqu\u00e9s Glasya-Labolas", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Marqu\u00e9s Ronove", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Marqu\u00e9s Astaroth", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Rey Foras", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Marqu\u00e9s Gaap", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Marqu\u00e9s Marchosias", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Marqu\u00e9s Phenex", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Marqu\u00e9s Malphas", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Rey Focalor", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Marqu\u00e9s Sabnock", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Marqu\u00e9s Vine", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Marqu\u00e9s Uvall", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "H_Marqu\u00e9s Crocell", "width": 1}, {"from": "R_SMOL_ARISTEROS", "to": "V_Daniel 12:7", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_Deuteronomy 5:29", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_Deuteronomy 17:11", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_Ecclesiastes 10:2", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_Exodus 14:22", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_Exodus 14:29", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_Ezekiel 4:4", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_Genesis 13:9", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_Genesis 14:15", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_Genesis 24:49", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_Genesis 48:13", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_Genesis 48:14", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_II_Chronicles 3:17", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_II_Chronicles 18:18", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_II_Chronicles 23:10", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_II_Kings 11:11", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_II_Samuel 2:21", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_II_Samuel 16:6", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_I_Chronicles 12:2", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_I_Kings 7:21", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_I_Kings 7:39", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_I_Kings 22:19", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_Joshua 19:27", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_Judges 3:21", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_Judges 16:29", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_Leviticus 14:15", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_Leviticus 14:16", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_Leviticus 14:26", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_Leviticus 14:27", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_Nehemiah 8:4", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_Song_of_Songs 2:6", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_Song_of_Songs 8:3", "width": 0.3}, {"from": "R_SMOL_ARISTEROS", "to": "V_Zechariah 4:3", "width": 0.3}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Agares", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Samigina", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Valefor", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Barbatos", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Buer", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Sitri", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Leraje", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Zepar", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Bathin", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Purson", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Ipos", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Naberius", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Bune", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Berith", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Forneus", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Asmoday", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Furfur", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Stolas", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Halphas", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Raum", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Vepar", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Shax", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Bifrons", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Haagenti", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "H_Duque Furcas", "width": 1}, {"from": "R_YADA_GINOSKO", "to": "V_Daniel 12:7", "width": 0.3}, {"from": "H_Duque Agares", "to": "O_H_Duque Agares_0", "width": 2}, {"from": "H_Duque Agares", "to": "O_H_Duque Agares_1", "width": 2}, {"from": "H_Duque Leraje", "to": "O_H_Duque Leraje_0", "width": 2}, {"from": "H_Duque Leraje", "to": "O_H_Duque Leraje_1", "width": 2}, {"from": "H_Duque Bifrons", "to": "O_H_Duque Bifrons_0", "width": 2}, {"from": "H_Duque Bifrons", "to": "O_H_Duque Bifrons_1", "width": 2}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "forceAtlas2Based": {
+            "avoidOverlap": 1,
+            "centralGravity": 0.015,
+            "damping": 0.9,
+            "gravitationalConstant": -60,
+            "springConstant": 0.03,
+            "springLength": 150
+        },
+        "solver": "forceAtlas2Based",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+                      network.on("stabilizationProgress", function(params) {
+                          document.getElementById('loadingBar').removeAttribute("style");
+                          var maxWidth = 496;
+                          var minWidth = 20;
+                          var widthFactor = params.iterations/params.total;
+                          var width = Math.max(minWidth,maxWidth * widthFactor);
+                          document.getElementById('bar').style.width = width + 'px';
+                          document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+                      });
+                      network.once("stabilizationIterationsDone", function() {
+                          document.getElementById('text').innerHTML = '100%';
+                          document.getElementById('bar').style.width = '496px';
+                          document.getElementById('loadingBar').style.opacity = 0;
+                          // really clean the dom element
+                          setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+                      });
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
