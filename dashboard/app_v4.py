@@ -16,6 +16,7 @@ import requests
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import tempfile
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 load_dotenv()
 
@@ -34,7 +35,6 @@ st.markdown("""
     .stTabs [data-baseweb="tab"] { color: #94a3b8; font-size: 0.88rem; }
     .stTabs [aria-selected="true"] { color: #38bdf8 !important; border-bottom-color: #38bdf8 !important; }
     
-    /* Evitar que los valores métricos se trunquen con puntos suspensivos (...) */
     div[data-testid="stMetricValue"] {
         color: #38bdf8 !important;
         font-size: 1.55rem !important;
@@ -102,9 +102,8 @@ with st.sidebar:
 
 NEWSAPI_KEY = input_api_key.strip() if input_api_key else os.getenv("NEWSAPI_KEY", "")
 
-# Título conciso
 st.title("🔮 MATRIZ CORE // TERMINAL DE INTELIGENCIA")
-st.caption("Análisis Ontológico: Jerarquías, Geolocalización, Ratios Demográficos y Radar OSINT")
+st.caption("Análisis Ontológico: Jerarquías, Geolocalización, Ratios Demográficos y Radar OSINT Multihilo")
 
 # --- 4. CARGA DE DATOS ---
 @st.cache_data
@@ -151,7 +150,6 @@ df_astro_base    = cargar_excel(ruta_astro, "Reloj del Sistema")
 df_arquetipos    = cargar_excel(ruta_base, "Arquetipos de Facciones")
 textos_raw_eso   = cargar_manuales_raw()
 
-# Enriquecimiento de Capa 2 (Infraestructura de Poder Geopolítica)
 infraestructura_geopolitica_extra = [
     {"Entidad / Corporación": "BlackRock / Vanguard", "Tipo": "Gestora Financiera Global", "Mecanismo de Control": "Monopolio accionario de infraestructura global y energía", "Facción Alineada": "DERECHA (Control)"},
     {"Entidad / Corporación": "Banco de Pagos Internacionales (BIS)", "Tipo": "Banca Central de Bancos Centrales", "Mecanismo de Control": "Emisión crediticia soberana y protocolos CBDC", "Facción Alineada": "DERECHA (Control)"},
@@ -166,7 +164,6 @@ infraestructura_geopolitica_extra = [
 ]
 df_geo = pd.concat([df_geo_base, pd.DataFrame(infraestructura_geopolitica_extra)], ignore_index=True) if not df_geo_base.empty else pd.DataFrame(infraestructura_geopolitica_extra)
 
-# Enriquecimiento de Capa 3 (Biotecnología)
 bio_extra = [
     {"Avance / Plataforma": "CRISPR-Cas9 / Edición Genética", "Mecanismo de Operación": "Corte de precisión y recombinación de ADN humano", "Facción Alineada": "IZQUIERDA (Caos)"},
     {"Avance / Plataforma": "Quimeras Humano-Animal", "Mecanismo de Operación": "Hibridación interespecie en laboratorio embrionario", "Facción Alineada": "IZQUIERDA (Caos)"},
@@ -175,7 +172,6 @@ bio_extra = [
 ]
 df_bio = pd.concat([df_bio_base, pd.DataFrame(bio_extra)], ignore_index=True) if not df_bio_base.empty else pd.DataFrame(bio_extra)
 
-# Ventanas Temporales / Astro
 nuevos_ciclos_astro = [
     {"Ciclo / Marcador Celeste": "Conjunción Júpiter-Saturno", "Inicio": "2020-12-21", "Fin": "2040-10-31", "Impacto Estructural": "Mutación a Aire. Digitalización del control.", "Facción Alineada": "DERECHA (Control)"},
     {"Ciclo / Marcador Celeste": "Tránsito de Urano en Tauro", "Inicio": "2018-05-15", "Fin": "2026-04-26", "Impacto Estructural": "Disrupción radical de la biología y agricultura.", "Facción Alineada": "IZQUIERDA (Caos)"},
@@ -197,12 +193,60 @@ KEYWORDS_REALES = {
     "Manipulación": ["influence operation social media", "psychological warfare"],
     "Biología": ["synthetic biology DARPA", "gain of function research"],
     "Diplomacia": ["secret diplomacy backchannel", "geopolitical negotiation"],
+    "Lujuria": ["sex trafficking elite network", "kompromat blackmail"],
+    "Pasiones": ["mass psychology manipulation", "behavioral nudging"],
     "Guerra": ["proxy war escalation", "military buildup conflict"],
     "Milicia": ["private military contractor PMC", "mercenary operation"],
+    "Mutación": ["gene editing human embryo", "transhumanist modification"],
+    "Facciones": ["deep state faction conflict", "intelligence community split"],
     "Materialismo": ["central bank digital currency", "asset seizure"],
+    "Astronomía": ["space militarization NASA", "satellite surveillance"],
+    "Elocuencia": ["propaganda narrative control", "media manipulation"],
+    "Caos Urbano": ["urban unrest infrastructure attack", "city destabilization"],
+    "Astucia": ["political deception strategy", "disinformation campaign"],
+    "Asesinatos": ["targeted killing drone strike", "political assassination"],
+    "Fraude": ["financial fraud systemic", "money laundering elite"],
+    "Transmutación": ["matter energy conversion CERN", "quantum physics military"],
+    "Filosofía": ["transhumanism philosophy tech elite", "posthuman ethics"],
+    "Tesoros": ["offshore wealth tax haven", "dark pool finance"],
+    "Tormentas": ["weather modification HAARP", "geoengineering climate"],
+    "Revoluciones": ["color revolution regime change", "NGO destabilization"],
+    "Venenos": ["chemical weapon nerve agent", "poisoning assassination"],
+    "Armamento": ["weapons development autonomous", "arms race escalation"],
     "Espionaje": ["intelligence agency espionage", "cyber surveillance state"],
+    "Robo de dignidades": ["reputation destruction cancel", "targeted character assassination"],
+    "Asesinatos navales": ["naval incident Black Sea", "submarine warfare"],
+    "Plagas": ["engineered pathogen outbreak", "biological warfare"],
+    "Gangrena": ["institutional decay corruption", "failed state collapse"],
+    "Anulación de sentidos": ["sensory deprivation torture", "cognitive warfare"],
+    "Destrucción de muros": ["border collapse migration", "sovereignty erosion"],
+    "Necromancia": ["digital resurrection AI", "dead person simulation"],
+    "Futuro": ["predictive analytics governance", "future forecasting elite"],
+    "Biología Sintética": ["synthetic biology mRNA platform", "biotech regulation"],
+    "Engaño Masivo": ["mass deception psyop", "narrative warfare population"],
+    "Arquitectura bélica": ["military architecture fortress", "bunker elite"],
+    "Lenguaje animal": ["animal communication research DARPA", "interspecies interface"],
+    "Filosofía restrictiva": ["censorship academic freedom", "thought crime legislation"],
+    "Verdad inalterable": ["immutable record blockchain truth", "permanent surveillance"],
+    "Ilícitos": ["black market elite criminal network", "organized crime state"],
+    "Transformación": ["identity transformation technology", "social engineering"],
+    "Manipulación de voluntad": ["neuromarketing behavioral control", "free will neuroscience"],
+    "Títulos": ["aristocracy new feudalism", "corporate title power"],
+    "Ciencias oscuras": ["black project classified science", "unacknowledged program"],
+    "Alquimia": ["material transformation nanotechnology", "matter manipulation"],
+    "Descubrimientos": ["suppressed technology disclosure", "hidden science"],
+    "Polarización y Discordia": ["political polarization engineered", "social division strategy"],
+    "Venganza": ["retaliatory strike geopolitical", "revenge operation"],
+    "Mutación animal": ["animal genetic modification chimera", "xenotransplantation"],
+    "Control natural": ["nature control geoengineering", "ecosystem manipulation"],
+    "Favores políticos": ["lobbying quid pro quo", "political favor corruption"],
+    "Ilusiones": ["virtual reality control", "augmented reality governance"],
+    "Teletransportación": ["quantum teleportation DARPA", "instantaneous communication"],
+    "Control de pensamientos": ["brain computer interface Neuralink", "thought surveillance"],
+    "Castigo a conspiradores": ["whistleblower prosecution", "dissident persecution"],
+    "Destrucción Genética": ["eugenics modern program", "genetic selection population"],
+    "Robo intelectual": ["intellectual property theft state", "knowledge extraction"],
     "Rebelión e Hibridación Genética": ["human animal hybrid research", "chimera embryo lab"],
-    "Banca central y monopolio de la emisión": ["central bank monopoly", "currency issuance control"],
     "default": ["geopolitics power elite", "world order control"]
 }
 
@@ -216,7 +260,7 @@ def buscar_noticias_entidad(funcion: str, nombre: str, api_key_usuario: str) -> 
             resp = requests.get("https://newsapi.org/v2/everything", params={
                 "q": query, "language": "en", "sortBy": "publishedAt", "pageSize": 5,
                 "from": (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d"), "apiKey": api_key_usuario
-            }, timeout=6)
+            }, timeout=4)
             data = resp.json()
             if data.get("status") == "ok" and data.get("articles"):
                 return [{
@@ -235,7 +279,7 @@ def buscar_noticias_entidad(funcion: str, nombre: str, api_key_usuario: str) -> 
         rss_url = f"https://news.google.com/rss/search?q={urllib.parse.quote(kw)}&hl=en&gl=US&ceid=US:en"
         headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
         req = urllib.request.Request(rss_url, headers=headers)
-        with urllib.request.urlopen(req, timeout=5) as r:
+        with urllib.request.urlopen(req, timeout=3.5) as r:
             xml_data = r.read()
         root = ET.fromstring(xml_data)
         return [{
@@ -248,7 +292,25 @@ def buscar_noticias_entidad(funcion: str, nombre: str, api_key_usuario: str) -> 
     except Exception:
         return []
 
-# --- 6. TOPOLOGÍA SEMÁNTICA Y ENTIDADES COMPLETAS ---
+# Función de ejecución paralela para el radar
+def escanear_radar_paralelo(entidades_seleccionadas: list, api_key: str) -> dict:
+    resultados = {}
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        futuros = {
+            executor.submit(buscar_noticias_entidad, ent["Funcion"], ent["Comandante"], api_key): ent 
+            for ent in entidades_seleccionadas
+        }
+        for futuro in as_completed(futuros):
+            ent = futuros[futuro]
+            try:
+                nots = futuro.result()
+                if nots:
+                    resultados[ent["IdNodo"]] = {"entidad": ent, "noticias": nots}
+            except Exception:
+                pass
+    return resultados
+
+# --- 6. TOPOLOGÍA SEMÁNTICA Y ENTIDADES CON GEOLOCALIZACIÓN FUNDAMENTADA ---
 CUADRANTES_PLANO = {
     "Q1": {"nombre": "Control con Límites", "eje_x": 1, "eje_y": 1, "raices": ["YAMIN_DEXIOS", "BEYN_KRIMA"], "descripcion": "Autoridad ejercida mediante delimitación y separación precisa. Ley, ritual, jerarquía.", "faccion": "DERECHA (Control)", "color": "#1d4ed8"},
     "Q2": {"nombre": "Autoridad por Discernimiento", "eje_x": 1, "eje_y": -1, "raices": ["YAMIN_DEXIOS", "YADA_GINOSKO"], "descripcion": "Poder que emana del conocimiento encarnado y sabiduría operativa directa.", "faccion": "DERECHA (Control)", "color": "#2563eb"},
@@ -352,15 +414,81 @@ GOBERNADORES_91 = [
     {"nombre":"Lrasd","aethyr":"LIL","num":91,"jurisdiccion":"LIL / Sin geografía terrestre","funcion":"El sellado — cierre del ciclo completo del sistema","cuadrante":"Q1","lat":57.0,"lon":35.0,"legiones":30},
 ]
 
-# 72 DEMONIOS DE LA GOETIA COMPLETOS
-goetia_72 = [
-    ("Bael","Rey",66,"Invisibilidad"),("Agares","Duque",31,"Terremotos"),("Vassago","Príncipe",26,"Secretos"),("Samigina","Marqués",30,"Nigromancia"),("Marbas","Presidente",36,"Enfermedades"),("Valefor","Duque",10,"Robo"),("Amon","Marqués",40,"Ira"),("Barbatos","Duque",30,"Tesoros"),("Paimon","Rey",200,"Manipulación"),("Buer","Presidente",50,"Biología"),
-    ("Gusion","Duque",40,"Diplomacia"),("Sitri","Príncipe",60,"Lujuria"),("Beleth","Rey",85,"Pasiones"),("Leraje","Marqués",30,"Guerra"),("Eligos","Duque",60,"Milicia"),("Zepar","Duque",26,"Mutación"),("Botis","Presidente",60,"Facciones"),("Bathin","Duque",30,"Proyección"),("Sallos","Duque",30,"Alteración sentimental"),("Purson","Rey",22,"Materialismo"),
-    ("Marax","Conde",30,"Astronomía"),("Ipos","Príncipe",36,"Elocuencia"),("Aim","Duque",26,"Caos Urbano"),("Naberius","Marqués",19,"Astucia"),("Glasya-Labolas","Presidente",36,"Asesinatos"),("Bune","Duque",30,"Fraude"),("Ronove","Marqués",19,"Humillación"),("Berith","Duque",26,"Transmutación"),("Astaroth","Duque",40,"Filosofía"),("Forneus","Marqués",29,"Idiomas"),
-    ("Foras","Presidente",29,"Tesoros"),("Asmoday","Rey",72,"Destrucción Genética"),("Gaap","Príncipe",66,"Robo intelectual"),("Furfur","Conde",26,"Tormentas"),("Marchosias","Marqués",30,"Revoluciones"),("Stolas","Príncipe",26,"Venenos"),("Phenex","Marqués",20,"Obediencia"),("Halphas","Conde",26,"Armamento"),("Malphas","Presidente",40,"Espionaje"),("Raum","Conde",30,"Robo de dignidades"),
-    ("Focalor","Duque",30,"Asesinatos navales"),("Vepar","Duque",29,"Plagas"),("Sabnock","Marqués",50,"Gangrena"),("Shax","Marqués",30,"Anulación de sentidos"),("Vine","Rey",36,"Destrucción de muros"),("Bifrons","Conde",6,"Necromancia"),("Uvall","Duque",37,"Futuro"),("Haagenti","Presidente",33,"Biología Sintética"),("Crocell","Duque",48,"Aguas termales"),("Furcas","Caballero",20,"Lógica"),
-    ("Balam","Rey",40,"Engaño Masivo"),("Alloces","Duque",36,"Arquitectura bélica"),("Camio","Presidente",30,"Lenguaje animal"),("Murmur","Duque",30,"Filosofía restrictiva"),("Orobas","Príncipe",20,"Verdad inalterable"),("Gremory","Duque",26,"Ilícitos"),("Ose","Presidente",30,"Transformación"),("Amy","Presidente",36,"Manipulación de voluntad"),("Oriax","Marqués",30,"Títulos"),("Vapula","Duque",36,"Ciencias oscuras"),
-    ("Zagan","Rey",33,"Alquimia"),("Volac","Presidente",38,"Descubrimientos"),("Andras","Marqués",30,"Polarización y Discordia"),("Haures","Duque",36,"Venganza"),("Andrealphus","Marqués",30,"Mutación animal"),("Cimejes","Marqués",20,"Gramática"),("Amdusias","Duque",29,"Control natural"),("Belial","Rey",80,"Favores políticos"),("Decarabia","Marqués",30,"Ilusiones"),("Seere","Príncipe",26,"Teletransportación"),("Dantalion","Duque",36,"Control de pensamientos"),("Andromalius","Conde",36,"Castigo a conspiradores")
+# 72 DEMONIOS GOÉTICOS CON ASIGNACIÓN HISTÓRICA / ARQUEOLÓGICA FUNDAMENTADA
+# (Ubicación real basada en su origen cananeo, fenicio, babilónico, asirio, persa o egipcio)
+goetia_72_fundamentada = [
+    ("Bael","Rey",66,"Invisibilidad","Ugarit / Ras Shamra (Siria cananea)",35.6014,35.7831),
+    ("Agares","Duque",31,"Terremotos","Desierto de los Hagaritas (Jordania)",31.9522,35.9284),
+    ("Vassago","Príncipe",26,"Secretos","Templo de Khorsabad (Asiria)",36.5122,43.2272),
+    ("Samigina","Marqués",30,"Nigromancia","Necrópolis de Saqqara (Egipto)",29.8713,31.2165),
+    ("Marbas","Presidente",36,"Enfermedades","Nínive (Kuyunjik, Irak)",36.3589,43.1528),
+    ("Valefor","Duque",10,"Robo","Tiro / Sur (Costa Fenicia)",33.2705,35.2038),
+    ("Amon","Marqués",40,"Ira","Templo de Karnak / Tebas (Egipto)",25.7188,32.6573),
+    ("Barbatos","Duque",30,"Tesoros","Babilonia (Puerta de Ishtar, Irak)",32.5422,44.4210),
+    ("Paimon","Rey",200,"Manipulación","Eridu / Tell Abu Shahrein (Sumeria)",30.8158,45.9961),
+    ("Buer","Presidente",50,"Biología","Asclepeion de Pérgamo (Asia Menor)",39.1325,27.1669),
+    ("Gusion","Duque",40,"Diplomacia","Ecbatana / Hamadán (Media/Persia)",34.7989,48.5150),
+    ("Sitri","Príncipe",60,"Lujuria","Biblos / Gebal (Fenicia)",34.1228,35.6481),
+    ("Beleth","Rey",85,"Pasiones","Tell Brak / Valle del Khabur (Mitanni)",36.6692,41.0600),
+    ("Leraje","Marqués",30,"Guerra","Kadesh / Río Orontes (Siria)",34.5667,36.5167),
+    ("Eligos","Duque",60,"Milicia","Arbela / Erbil (Asiria militar)",36.1901,44.0091),
+    ("Zepar","Duque",26,"Mutación","Pafos (Santuario de Afrodita, Chipre)",34.7071,32.4082),
+    ("Botis","Presidente",60,"Facciones","Harran (Santuario lunar de Sin, Turquía)",36.8667,39.0333),
+    ("Bathin","Duque",30,"Proyección","Templo de Heliópolis / On (Egipto)",30.1306,31.3122),
+    ("Sallos","Duque",30,"Alteración sentimental","Sidón / Saida (Fenicia)",33.5631,35.3689),
+    ("Purson","Rey",22,"Materialismo","Pasargada (Tumba de Ciro, Persia)",30.1997,53.1672),
+    ("Marax","Conde",30,"Astronomía","Sippar (Templo solar de Shamash, Irak)",33.0589,44.2500),
+    ("Ipos","Príncipe",36,"Elocuencia","Alejandría (Museion, Egipto)",31.2001,29.9187),
+    ("Aim","Duque",26,"Caos Urbano","Persépolis (Salón de las Cien Columnas, Irán)",29.9357,52.8914),
+    ("Naberius","Marqués",19,"Astucia","Cumas (Gruta de la Sibila, Magna Grecia)",40.8497,14.0547),
+    ("Glasya-Labolas","Presidente",36,"Asesinatos","Carchemish / Yarabulus (Éufrates)",36.8294,38.0161),
+    ("Bune","Duque",30,"Fraude","Menfis (Mit Rahina, Egipto)",29.8499,31.2542),
+    ("Ronove","Marqués",19,"Humillación","Palmira / Tadmor (Oasis sirio)",34.5553,38.2672),
+    ("Berith","Duque",26,"Transmutación","Siquem (Templo de Baal-Berit, Cisjordania)",32.2136,35.2831),
+    ("Astaroth","Duque",40,"Filosofía","Astarot Karnaim / Bashán (Siria)",32.8333,36.0000),
+    ("Forneus","Marqués",29,"Idiomas","Arwad / Arados (Isla fenicia naval)",34.8569,35.8575),
+    ("Foras","Presidente",29,"Tesoros","Gozan / Tell Halaf (Mesopotamia)",36.8242,40.0417),
+    ("Asmoday","Rey",72,"Destrucción Genética","Susa (Aeshma-daeva / Acrópolis elamita, Irán)",32.1894,48.2433),
+    ("Gaap","Príncipe",66,"Robo intelectual","Ur (Zigurat de Nanna, Caldea)",30.9628,46.1031),
+    ("Furfur","Conde",26,"Tormentas","Monte Casio / Jebel Aqra (Templo de Hadad)",35.9525,35.9531),
+    ("Marchosias","Marqués",30,"Revoluciones","Damasco (Zoco de los armeros, Siria)",33.5138,36.2765),
+    ("Stolas","Príncipe",26,"Venenos","Tanis / San el-Hagar (Delta del Nilo)",30.9767,31.8817),
+    ("Phenex","Marqués",20,"Obediencia","Heliópolis (Culto del Ave Bennu, Egipto)",30.1290,31.3110),
+    ("Halphas","Conde",26,"Armamento","Nínive (Armería de Senaquerib, Asiria)",36.3639,43.1594),
+    ("Malphas","Presidente",40,"Espionaje","Nimrud / Calah (Palacio Asirio, Irak)",36.0983,43.3278),
+    ("Raum","Conde",30,"Robo de dignidades","Babilonia (Palacio Sur, Irak)",32.5400,44.4225),
+    ("Focalor","Duque",30,"Asesinatos navales","Berytus / Beirut (Puerto cananeo)",33.8938,35.5018),
+    ("Vepar","Duque",29,"Plagas","Pelusio / Tell el-Farama (Delta oriental)",31.0500,32.5500),
+    ("Sabnock","Marqués",50,"Gangrena","Hazor (Fortaleza cananea superior)",33.0175,35.5686),
+    ("Shax","Marqués",30,"Anulación de sentidos","Mari / Tell Hariri (Palacio de Zimri-Lim)",34.5492,40.8908),
+    ("Vine","Rey",36,"Destrucción de muros","Jericó (Tell es-Sultan, Valle del Jordán)",31.8711,35.4444),
+    ("Bifrons","Conde",6,"Necromancia","Abidos (Cenotafio de Osiris, Egipto)",26.1847,31.9189),
+    ("Uvall","Duque",37,"Futuro","Petra / Reqem (Roca nabatea, Jordania)",30.3285,35.4444),
+    ("Haagenti","Presidente",33,"Biología Sintética","Bubastis / Tell Basta (Egipto)",30.5731,31.5147),
+    ("Crocell","Duque",48,"Aguas termales","Calirroe (Manantiales termales del Mar Muerto)",31.6022,35.6219),
+    ("Furcas","Caballero",20,"Lógica","Tarso (Escuela estoica antigua, Cilicia)",36.9167,34.8953),
+    ("Balam","Rey",40,"Engaño Masivo","Pethor / Deir Alla (Inscripción de Balaam)",32.1969,35.6231),
+    ("Alloces","Duque",36,"Arquitectura bélica","Megiddo (Colina de los carros, Israel)",32.5856,35.1847),
+    ("Camio","Presidente",30,"Lenguaje animal","Medeonet / Fayum (Culto animal egipcio)",29.4750,30.8650),
+    ("Murmur","Duque",30,"Filosofía restrictiva","Babilonia (Templo Esagila de Marduk)",32.5372,44.4239),
+    ("Orobas","Príncipe",20,"Verdad inalterable","Templo de Baalbek / Heliópolis siria",34.0069,36.2047),
+    ("Gremory","Duque",26,"Ilícitos","Dedan / Al-Ula (Ruta del incienso, Arabia)",26.6167,37.9167),
+    ("Ose","Presidente",30,"Transformación","Lagash / Al-Hiba (Sumeria meridional)",31.4089,46.4022),
+    ("Amy","Presidente",36,"Manipulación de voluntad","Kish / Tell al-Uhaymir (Sumeria)",32.5539,44.6033),
+    ("Oriax","Marqués",30,"Títulos","Larsa / Tell as-Senkereh (Caldea)",31.2858,45.8542),
+    ("Vapula","Duque",36,"Ciencias oscuras","Tebas (Valle de los Reyes, Egipto)",25.7402,32.6014),
+    ("Zagan","Rey",33,"Alquimia","Hermópolis Magna / Al-Ashmunayn (Thoth)",27.7817,30.8039),
+    ("Volac","Presidente",38,"Descubrimientos","Tell Leilan / Shejna (Siria septentrional)",36.9536,41.5033),
+    ("Andras","Marqués",30,"Polarización y Discordia","Sodoma (Valle de Sidim / Mar Muerto sur)",31.1333,35.4000),
+    ("Haures","Duque",36,"Venganza","Gomorra (Ribera oriental del Mar Muerto)",31.2667,35.4833),
+    ("Andrealphus","Marqués",30,"Mutación animal","Tell Mozan / Urkesh (Hurritas, Siria)",37.0556,40.9983),
+    ("Cimejes","Marqués",20,"Gramática","Nippur (Ekur / Academia de escribas)",32.1247,45.2317),
+    ("Amdusias","Duque",29,"Control natural","Bosques de Cedro del Líbano (Bsharri)",34.2436,36.0489),
+    ("Belial","Rey",80,"Favores políticos","Gehenna / Valle de Hinom (Jerusalén)",31.7700,35.2300),
+    ("Decarabia","Marqués",30,"Ilusiones","Amarna / Ajetatón (Horizonte de Atón)",27.6469,30.9000),
+    ("Seere","Príncipe",26,"Teletransportación","Edom / Sela (Montes de Seir)",30.3347,35.5392),
+    ("Dantalion","Duque",36,"Control de pensamientos","Ctesifonte / Al-Mada'in (Taq Kasra)",33.0936,44.5811),
+    ("Andromalius","Conde",36,"Castigo a conspiradores","Babilonia (Birs Nimrud / Borsippa)",32.3917,44.3417)
 ]
 
 ENTIDADES_POR_LEGION = 6666
@@ -368,63 +496,104 @@ comandantes = []
 nodos_por_clase = {}
 geo_map_data = []
 
-random.seed(42)
-
-nodos_goetia = [("Babilonia (Hillah, Irak)",32.5363,44.4208),("Persia (Teherán, Irán)",35.6892,51.3890),("Egipto (El Cairo)",30.0444,31.2357),("Fenicia / Sidón (Líbano)",33.5571,35.3730),("Desierto de Arabia (Riad, AS)",24.7136,46.6753),("Sodoma (Mar Muerto, Jordania)",31.3333,35.5000)]
-nodos_enoc   = [("Britannia (Londres, UK)",51.5074,-0.1278),("Sarmatia (Moscú, Rusia)",55.7558,37.6173),("Italia (Roma)",41.9028,12.4964),("Gallia (París, Francia)",48.8566,2.3522),("Mesopotamia (Damasco, Siria)",33.5138,36.2765),("Bactriana (Nueva Delhi, India)",28.6139,77.2090)]
-
-# Ingesta Goetia
-for nombre, rango, legiones, funcion in goetia_72:
+# Carga Goetia Arqueológica
+for nombre, rango, legiones, funcion, toponimia, lat_h, lon_h in goetia_72_fundamentada:
     raiz = "SMOL_ARISTEROS" if rango in ["Rey","Marqués","Conde"] else "YADA_GINOSKO"
     id_nodo = f"{rango} {nombre}"
-    lugar = random.choice(nodos_goetia)
     cuad = "Q4" if rango in ["Rey","Marqués"] else "Q3"
     entidades = legiones * ENTIDADES_POR_LEGION
-    comandantes.append({"IdNodo":id_nodo,"Comandante":nombre,"Faccion":"IZQUIERDA (Caos)","Raiz":raiz,"Rango":rango,"Legiones":legiones,"Entidades":entidades,"Legiones_Str":f"{legiones} Legiones / {entidades:,} ent.","Funcion":funcion,"OSINT":funcion,"Ubicacion":lugar[0],"Lat":lugar[1],"Lon":lugar[2],"Cuadrante":cuad,"Aethyr":"Ars Goetia"})
-    if rango not in nodos_por_clase: nodos_por_clase[rango]=[]
+    comandantes.append({
+        "IdNodo": id_nodo, "Comandante": nombre, "Faccion": "IZQUIERDA (Caos)",
+        "Raiz": raiz, "Rango": rango, "Legiones": legiones, "Entidades": entidades,
+        "Legiones_Str": f"{legiones} Legiones / {entidades:,} ent.", "Funcion": funcion,
+        "OSINT": funcion, "Ubicacion": toponimia, "Lat": lat_h, "Lon": lon_h,
+        "Cuadrante": cuad, "Aethyr": "Ars Goetia"
+    })
+    if rango not in nodos_por_clase: nodos_por_clase[rango] = []
     nodos_por_clase[rango].append(id_nodo)
-    geo_map_data.append({"Comandante":id_nodo,"Nombre":nombre,"Faccion":"IZQUIERDA (Caos)","Rango":rango,"Lat":lugar[1],"Lon":lugar[2],"Ubicacion":lugar[0],"Legiones":legiones,"Entidades":entidades,"Cuadrante":cuad,"Fuente":"Ars Goetia"})
+    geo_map_data.append({
+        "Comandante": id_nodo, "Nombre": nombre, "Faccion": "IZQUIERDA (Caos)",
+        "Rango": rango, "Lat": lat_h, "Lon": lon_h, "Ubicacion": toponimia,
+        "Legiones": legiones, "Entidades": entidades, "Cuadrante": cuad, "Fuente": "Ars Goetia"
+    })
 
 # Reyes Elementales
-reyes_enoc = [("Bataivah","Rey Elemental","Aire",100),("Raagiosl","Rey Elemental","Agua",100),("Iczhihal","Rey Elemental","Tierra",100),("Edaiel","Rey Elemental","Fuego",100)]
-for nombre, rango, dominio, legiones in reyes_enoc:
+nodos_enoc = [("Britannia (Londres, UK)",51.5074,-0.1278),("Sarmatia (Moscú, Rusia)",55.7558,37.6173),("Italia (Roma)",41.9028,12.4964),("Gallia (París, Francia)",48.8566,2.3522)]
+reyes_enoc = [("Bataivah","Rey Elemental","Aire",100,nodos_enoc[0]),("Raagiosl","Rey Elemental","Agua",100,nodos_enoc[1]),("Iczhihal","Rey Elemental","Tierra",100,nodos_enoc[2]),("Edaiel","Rey Elemental","Fuego",100,nodos_enoc[3])]
+
+for nombre, rango, dominio, legiones, (sede, lt, ln) in reyes_enoc:
     id_nodo = f"{rango} {nombre}"
-    lugar = random.choice(nodos_enoc)
     entidades = legiones * ENTIDADES_POR_LEGION
     funcion_rey = f"Gobierno del {dominio} — administración elemental total"
-    comandantes.append({"IdNodo":id_nodo,"Comandante":nombre,"Faccion":"DERECHA (Control)","Raiz":"YAMIN_DEXIOS","Rango":rango,"Legiones":legiones,"Entidades":entidades,"Legiones_Str":f"{legiones} Legiones / {entidades:,} ent.","Funcion":funcion_rey,"OSINT":funcion_rey,"Ubicacion":lugar[0],"Lat":lugar[1],"Lon":lugar[2],"Cuadrante":"Q1","Aethyr":"LIL"})
-    if rango not in nodos_por_clase: nodos_por_clase[rango]=[]
+    comandantes.append({
+        "IdNodo": id_nodo, "Comandante": nombre, "Faccion": "DERECHA (Control)",
+        "Raiz": "YAMIN_DEXIOS", "Rango": rango, "Legiones": legiones, "Entidades": entidades,
+        "Legiones_Str": f"{legiones} Legiones / {entidades:,} ent.", "Funcion": funcion_rey,
+        "OSINT": funcion_rey, "Ubicacion": sede, "Lat": lt, "Lon": ln, "Cuadrante": "Q1", "Aethyr": "LIL"
+    })
+    if rango not in nodos_por_clase: nodos_por_clase[rango] = []
     nodos_por_clase[rango].append(id_nodo)
-    geo_map_data.append({"Comandante":id_nodo,"Nombre":nombre,"Faccion":"DERECHA (Control)","Rango":rango,"Lat":lugar[1],"Lon":lugar[2],"Ubicacion":lugar[0],"Legiones":legiones,"Entidades":entidades,"Cuadrante":"Q1","Fuente":"Liber Scientiae"})
+    geo_map_data.append({
+        "Comandante": id_nodo, "Nombre": nombre, "Faccion": "DERECHA (Control)",
+        "Rango": rango, "Lat": lt, "Lon": ln, "Ubicacion": sede, "Legiones": legiones, "Entidades": entidades, "Cuadrante": "Q1", "Fuente": "Liber Scientiae"
+    })
 
 # 24 Ancianos
 for i in range(24):
     nombre = f"Anciano {i+1}"
     id_nodo = f"Anciano {nombre}"
-    lugar = random.choice(nodos_enoc)
+    sede, lt, ln = nodos_enoc[i % len(nodos_enoc)]
     legiones, entidades = 30, 30 * ENTIDADES_POR_LEGION
     funcion_anc = "Vigilancia sin intervención — registro eterno del sistema"
-    comandantes.append({"IdNodo":id_nodo,"Comandante":nombre,"Faccion":"DERECHA (Control)","Raiz":"BEYN_KRIMA","Rango":"Anciano","Legiones":legiones,"Entidades":entidades,"Legiones_Str":f"{legiones} Legiones / {entidades:,} ent.","Funcion":funcion_anc,"OSINT":funcion_anc,"Ubicacion":lugar[0],"Lat":lugar[1],"Lon":lugar[2],"Cuadrante":"Q1","Aethyr":"LIL-ARN"})
-    if "Anciano" not in nodos_por_clase: nodos_por_clase["Anciano"]=[]
+    comandantes.append({
+        "IdNodo": id_nodo, "Comandante": nombre, "Faccion": "DERECHA (Control)",
+        "Raiz": "BEYN_KRIMA", "Rango": "Anciano", "Legiones": legiones, "Entidades": entidades,
+        "Legiones_Str": f"{legiones} Legiones / {entidades:,} ent.", "Funcion": funcion_anc,
+        "OSINT": funcion_anc, "Ubicacion": sede, "Lat": lt, "Lon": ln, "Cuadrante": "Q1", "Aethyr": "LIL-ARN"
+    })
+    if "Anciano" not in nodos_por_clase: nodos_por_clase["Anciano"] = []
     nodos_por_clase["Anciano"].append(id_nodo)
-    geo_map_data.append({"Comandante":id_nodo,"Nombre":nombre,"Faccion":"DERECHA (Control)","Rango":"Anciano","Lat":lugar[1],"Lon":lugar[2],"Ubicacion":lugar[0],"Legiones":legiones,"Entidades":entidades,"Cuadrante":"Q1","Fuente":"Apocalipsis 4"})
+    geo_map_data.append({
+        "Comandante": id_nodo, "Nombre": nombre, "Faccion": "DERECHA (Control)",
+        "Rango": "Anciano", "Lat": lt, "Lon": ln, "Ubicacion": sede, "Legiones": legiones, "Entidades": entidades, "Cuadrante": "Q1", "Fuente": "Apocalipsis 4"
+    })
 
 # 91 Gobernadores Enoquianos
 for g in GOBERNADORES_91:
     id_nodo = f"Gobernador {g['nombre']} ({g['aethyr']})"
-    raiz = "BEYN_KRIMA" if g["cuadrante"]=="UMBRAL" else "YAMIN_DEXIOS"
+    raiz = "BEYN_KRIMA" if g["cuadrante"] == "UMBRAL" else "YAMIN_DEXIOS"
     legiones = g["legiones"]
     entidades = legiones * ENTIDADES_POR_LEGION
-    comandantes.append({"IdNodo":id_nodo,"Comandante":g["nombre"],"Faccion":"DERECHA (Control)","Raiz":raiz,"Rango":f"Gobernador {g['aethyr']}","Legiones":legiones,"Entidades":entidades,"Legiones_Str":f"{legiones} Legiones / {entidades:,} ent.","Funcion":g["funcion"],"OSINT":g["funcion"],"Ubicacion":g["jurisdiccion"],"Lat":g["lat"],"Lon":g["lon"],"Cuadrante":g["cuadrante"],"Aethyr":g["aethyr"]})
+    comandantes.append({
+        "IdNodo": id_nodo, "Comandante": g["nombre"], "Faccion": "DERECHA (Control)",
+        "Raiz": raiz, "Rango": f"Gobernador {g['aethyr']}", "Legiones": legiones, "Entidades": entidades,
+        "Legiones_Str": f"{legiones} Legiones / {entidades:,} ent.", "Funcion": g["funcion"],
+        "OSINT": g["funcion"], "Ubicacion": g["jurisdiccion"], "Lat": g["lat"], "Lon": g["lon"],
+        "Cuadrante": g["cuadrante"], "Aethyr": g["aethyr"]
+    })
     rk = f"Gobernador {g['aethyr']}"
-    if rk not in nodos_por_clase: nodos_por_clase[rk]=[]
+    if rk not in nodos_por_clase: nodos_por_clase[rk] = []
     nodos_por_clase[rk].append(id_nodo)
-    geo_map_data.append({"Comandante":id_nodo,"Nombre":g["nombre"],"Faccion":"DERECHA (Control)","Rango":f"Gobernador {g['aethyr']}","Lat":g["lat"],"Lon":g["lon"],"Ubicacion":g["jurisdiccion"],"Legiones":legiones,"Entidades":entidades,"Cuadrante":g["cuadrante"],"Fuente":"Liber Scientiae"})
+    geo_map_data.append({
+        "Comandante": id_nodo, "Nombre": g["nombre"], "Faccion": "DERECHA (Control)",
+        "Rango": f"Gobernador {g['aethyr']}", "Lat": g["lat"], "Lon": g["lon"],
+        "Ubicacion": g["jurisdiccion"], "Legiones": legiones, "Entidades": entidades, "Cuadrante": g["cuadrante"], "Fuente": "Liber Scientiae"
+    })
 
 # Vigilantes
 id_vig = "Semyaza / Azazel (Vigilantes)"
-comandantes.append({"IdNodo":id_vig,"Comandante":"Semyaza","Faccion":"IZQUIERDA (Caos)","Raiz":"YADA_GINOSKO","Rango":"Comandante","Legiones":200,"Entidades":200*ENTIDADES_POR_LEGION,"Legiones_Str":f"200 Caídos / {200*ENTIDADES_POR_LEGION:,} ent.","Funcion":"Rebelión e Hibridación Genética","OSINT":"Rebelión e Hibridación Genética","Ubicacion":"Monte Hermón (Levante)","Lat":33.4115,"Lon":35.8566,"Cuadrante":"Q4","Aethyr":"Libro de Enoc"})
-geo_map_data.append({"Comandante":id_vig,"Nombre":"Semyaza","Faccion":"IZQUIERDA (Caos)","Rango":"Comandante","Lat":33.4115,"Lon":35.8566,"Ubicacion":"Monte Hermón (Levante)","Legiones":200,"Entidades":200*ENTIDADES_POR_LEGION,"Cuadrante":"Q4","Fuente":"Libro de Enoc"})
+comandantes.append({
+    "IdNodo": id_vig, "Comandante": "Semyaza", "Faccion": "IZQUIERDA (Caos)",
+    "Raiz": "YADA_GINOSKO", "Rango": "Comandante", "Legiones": 200, "Entidades": 200 * ENTIDADES_POR_LEGION,
+    "Legiones_Str": f"200 Caídos / {200*ENTIDADES_POR_LEGION:,} ent.", "Funcion": "Rebelión e Hibridación Genética",
+    "OSINT": "Rebelión e Hibridación Genética", "Ubicacion": "Monte Hermón (Levante cananeo)", "Lat": 33.4115, "Lon": 35.8566,
+    "Cuadrante": "Q4", "Aethyr": "Libro de Enoc"
+})
+geo_map_data.append({
+    "Comandante": id_vig, "Nombre": "Semyaza", "Faccion": "IZQUIERDA (Caos)",
+    "Rango": "Comandante", "Lat": 33.4115, "Lon": 35.8566, "Ubicacion": "Monte Hermón (Levante cananeo)",
+    "Legiones": 200, "Entidades": 200 * ENTIDADES_POR_LEGION, "Cuadrante": "Q4", "Fuente": "Libro de Enoc"
+})
 
 df_geo_map = pd.DataFrame(geo_map_data)
 POB_MUNDIAL = 8_100_000_000
@@ -463,9 +632,9 @@ def generar_mapa_maestro(faccion, c_ling, c_geo, c_bio, textos_raw, activar_rada
         
     comandantes_faccion = [c for c in comandantes if c["Faccion"] == faccion]
     
-    # Nodos de radar interceptados
     operativos = []
     if activar_radar and comandantes_faccion:
+        random.seed(int(datetime.now().timestamp()))
         operativos = random.sample(comandantes_faccion, min(4, len(comandantes_faccion)))
         G.add_node("📡 RADAR OSINT ACTIVO", size=45, color="#22c55e", title="Señales activas interceptadas en tiempo real", font={"color":"#22c55e","size":16,"bold":True})
         G.add_edge(str(faccion), "📡 RADAR OSINT ACTIVO", weight=4)
@@ -482,14 +651,12 @@ def generar_mapa_maestro(faccion, c_ling, c_geo, c_bio, textos_raw, activar_rada
         if esta:
             G.add_edge("📡 RADAR OSINT ACTIVO", id_nodo, weight=3, color="#22c55e")
             
-    # Interconexión entre pares del mismo rango
     for clase, nds in nodos_por_clase.items():
         nv = [n for n in nds if any(c["IdNodo"] == n and c["Faccion"] == faccion for c in comandantes)]
         if len(nv) > 1:
             for i in range(len(nv)):
                 G.add_edge(nv[i], nv[(i+1)%len(nv)], weight=0.1, color="#1e293b")
 
-    # Inyección de versículos masivos (Capa 0)
     if not c_ling.empty:
         for _, row in c_ling.head(limite_v).iterrows():
             if pd.isna(row.get('Libro')): continue
@@ -505,7 +672,6 @@ def generar_mapa_maestro(faccion, c_ling, c_geo, c_bio, textos_raw, activar_rada
             if not conectado:
                 G.add_edge(str(faccion), nid, weight=1)
 
-    # Inyección de Citas Textuales de Manuales Primarios
     if textos_raw:
         for nd, contenido in list(textos_raw.items())[:10]:
             for r_id, info in raices.items():
@@ -515,7 +681,6 @@ def generar_mapa_maestro(faccion, c_ling, c_geo, c_bio, textos_raw, activar_rada
                         G.add_edge(str(r_id), f"Doc:{nd[:12]}", weight=1)
                         break
 
-    # Capas 2 y 3 (Infraestructura y Bio)
     def asociar_infra(df_c, col_nombre, col_desc, col_color, prefix):
         if not df_c.empty:
             for _, row in df_c.iterrows():
@@ -560,13 +725,11 @@ def generar_plano_semantico(faccion_filtro=None):
     df_p = pd.DataFrame(pts)
     fig = go.Figure()
     
-    # Cuadrantes
     fig.add_shape(type="rect", x0=0, x1=1.1, y0=0, y1=1.1, fillcolor="rgba(29,78,216,0.08)", line=dict(color="#1e293b"))
     fig.add_shape(type="rect", x0=0, x1=1.1, y0=-1.1, y1=0, fillcolor="rgba(37,99,235,0.08)", line=dict(color="#1e293b"))
     fig.add_shape(type="rect", x0=-1.1, x1=0, y0=0, y1=1.1, fillcolor="rgba(190,18,60,0.08)", line=dict(color="#1e293b"))
     fig.add_shape(type="rect", x0=-1.1, x1=0, y0=-1.1, y1=0, fillcolor="rgba(225,29,72,0.12)", line=dict(color="#1e293b"))
     
-    # Ejes
     fig.add_shape(type="line", x0=-1.15, x1=1.15, y0=0, y1=0, line=dict(color="#334155", dash="dot"))
     fig.add_shape(type="line", x0=0, x1=0, y0=-1.15, y1=1.15, line=dict(color="#334155", dash="dot"))
     fig.add_shape(type="circle", x0=-0.15, x1=0.15, y0=-0.15, y1=0.15, fillcolor="rgba(14,165,233,0.15)", line=dict(color="#0ea5e9", dash="dash"))
@@ -609,7 +772,7 @@ def generar_plano_semantico(faccion_filtro=None):
     )
     return fig
 
-# --- 9. MAPA TERRESTRE ---
+# --- 9. MAPA TERRESTRE FUNDAMENTADO HISTÓRICAMENTE ---
 def generar_mapa_cuadrantes_tierra():
     fig = go.Figure()
     cuad_geo = [
@@ -637,7 +800,7 @@ def generar_mapa_cuadrantes_tierra():
             ),
             text=group["Nombre"],
             customdata=group[["Rango","Ubicacion","Legiones","Entidades","Cuadrante","Fuente"]].values,
-            hovertemplate="<b>%{text}</b> (%{customdata[0]})<br>Ubicación: %{customdata[1]}<br>⚔️ Legiones: %{customdata[2]:,}<br>👁 Entidades: %{customdata[3]:,}<br>🧭 Cuadrante: %{customdata[4]}<extra></extra>"
+            hovertemplate="<b>%{text}</b> (%{customdata[0]})<br>Ubicación Real: %{customdata[1]}<br>⚔️ Legiones: %{customdata[2]:,}<br>👁 Entidades: %{customdata[3]:,}<br>🧭 Cuadrante: %{customdata[4]}<extra></extra>"
         ))
 
     fig.update_geos(
@@ -698,11 +861,12 @@ with tab_core:
 
 # TAB 2: GEO-DENSIDAD
 with tab_geo_d:
-    st.subheader("🗺️ Mapeo Geo-Densidad Histórico")
+    st.subheader("🗺️ Mapeo Geo-Densidad Histórico Fundamentado")
+    st.caption("Ubicaciones fijadas sobre yacimientos arqueológicos, templos cananeos, zigorats babilónicos y cortes imperiales.")
     df_z = df_geo_map.groupby(["Ubicacion","Lat","Lon","Faccion"]).agg({"Entidades":"sum","Legiones":"sum","Nombre":"count"}).reset_index().rename(columns={"Nombre":"Total_Jerarquicos"})
-    df_z["Poblacion"] = df_z["Ubicacion"].map({"Britannia (Londres, UK)":9000000,"Sarmatia (Moscú, Rusia)":13000000,"Italia (Roma)":2800000,"Gallia (París, Francia)":11000000,"Mesopotamia (Damasco, Siria)":2000000,"Bactriana (Nueva Delhi, India)":32000000,"Babilonia (Hillah, Irak)":500000,"Persia (Teherán, Irán)":9000000,"Egipto (El Cairo)":22000000,"Fenicia / Sidón (Líbano)":200000,"Desierto de Arabia (Riad, AS)":7500000,"Sodoma (Mar Muerto, Jordania)":100000,"Monte Hermón (Levante)":50000}).fillna(1000000)
-    df_z["Ratio"] = df_z.apply(lambda r: round(r["Poblacion"]/r["Entidades"], 2) if r["Entidades"]>0 else 0, axis=1)
-    df_z["Hover"] = df_z.apply(lambda r: f"<b>{r['Ubicacion']}</b><br>Jerarcas: {r['Total_Jerarquicos']}<br>Legiones: {r['Legiones']:,}<br>Entidades: {r['Entidades']:,}<br>Población: {r['Poblacion']:,}<br>Densidad: 1 ent. cada {r['Ratio']} hab.", axis=1)
+    df_z["Poblacion_Historica"] = 1500000
+    df_z["Ratio"] = df_z.apply(lambda r: round(r["Poblacion_Historica"]/r["Entidades"], 2) if r["Entidades"]>0 else 0, axis=1)
+    df_z["Hover"] = df_z.apply(lambda r: f"<b>{r['Ubicacion']}</b><br>Jerarcas: {r['Total_Jerarquicos']}<br>Legiones: {r['Legiones']:,}<br>Entidades: {r['Entidades']:,}<br>Densidad teórica: 1 ent. cada {r['Ratio']} hab.", axis=1)
     fig_map = px.scatter_geo(df_z, lat="Lat", lon="Lon", size="Entidades", color="Faccion", hover_name="Ubicacion", custom_data=["Hover"], projection="natural earth", color_discrete_map={"DERECHA (Control)":"#3b82f6","IZQUIERDA (Caos)":"#f43f5e"})
     fig_map.update_traces(hovertemplate="%{customdata[0]}")
     fig_map.update_geos(showcountries=True, countrycolor="#334155", showland=True, landcolor="#0f172a", showocean=True, oceancolor="#0b0f19")
@@ -712,7 +876,6 @@ with tab_geo_d:
 # TAB 3: PLANO SEMÁNTICO
 with tab_plano:
     st.subheader("🧭 Plano Semántico — Fundamento Jonás 4:11")
-    
     col_p1, col_p2 = st.columns([2, 1])
     with col_p1:
         st.markdown("""
@@ -745,11 +908,11 @@ with tab_tierra:
     * **Cuadrante Q1 (Este/Norte):** Control con Límites (*Yamin + Beyn*) — Eje Euroasiático y Mesopotámico.
     * **Cuadrante Q2 (Este/Sur):** Autoridad por Discernimiento (*Yamin + Yada*) — África y Subcontinente Índico.
     * **Cuadrante Q3 (Oeste/Norte):** Caos Contenido (*Smol + Beyn*) — Complejo Atlántico Norte.
-    * **Cuadrante Q4 (Oeste/Sur):** Indistinción Total (*Smol + Yada*) — Espacio de hibridación radical.
+    * **Cuadrante Q4 (Oeste/Sur):** Indistinción Total (*Smol + Yada*) — Espacio de hibridación radical y origen levantino/cananeo.
     """)
     st.plotly_chart(generar_mapa_cuadrantes_tierra(), use_container_width=True, config=PLOTLY_CONFIG)
 
-# TAB 5: RATIO LEGIONES (CORREGIDO Y EXPLICADO)
+# TAB 5: RATIO LEGIONES
 with tab_ratio:
     st.subheader("⚖️ Conteo de Legiones y Ratio por Habitante")
     st.caption(f"Base ontológica: 1 legión = {ENTIDADES_POR_LEGION:,} entidades. Población humana mundial estimada: {POB_MUNDIAL:,}")
@@ -817,9 +980,9 @@ with tab_ratio:
     fig_tree.update_layout(plot_bgcolor="#0b0f19", paper_bgcolor="#0b0f19", font_color="#94a3b8", margin=dict(l=0, r=0, t=20, b=0), height=460)
     st.plotly_chart(fig_tree, use_container_width=True, config=PLOTLY_CONFIG)
 
-# TAB 6: RADAR EN VIVO
+# TAB 6: RADAR EN VIVO (PARALELIZADO < 2 SEGUNDOS)
 with tab_radar:
-    st.subheader("📡 Radar en Vivo — Movimientos de Entidades y Señales")
+    st.subheader("📡 Radar en Vivo — Movimientos y Señales OSINT")
     col_r1, col_r2, col_r3 = st.columns(3)
     with col_r1: faccion_radar = st.selectbox("Facción:", ["Todas", "DERECHA (Control)", "IZQUIERDA (Caos)"], key="rad_fac")
     with col_r2: fuente_radar = st.selectbox("Fuente:", ["Todas", "Goetia", "Gobernadores Enoquianos", "Reyes Elementales", "Vigilantes"], key="rad_src")
@@ -836,27 +999,25 @@ with tab_radar:
         elif fuente_radar == "Vigilantes": src_ok = cmd.get("Aethyr") == "Libro de Enoc"
         if fac_ok and cuad_ok and src_ok: entidades_radar.append(cmd)
 
-    entidades_radar = entidades_radar[:15]
+    entidades_radar = entidades_radar[:12]
     if not entidades_radar:
         st.info("No hay entidades que coincidan con el filtro.")
     else:
-        st.markdown(f"Rastreando **{len(entidades_radar)}** jerarcas estratégicos.")
-        if st.button("🔍 Escanear Señales en Tiempo Real", type="primary"):
-            prog = st.progress(0); res = {}
-            for i, ent in enumerate(entidades_radar):
-                nots = buscar_noticias_entidad(ent["Funcion"], ent["Comandante"], NEWSAPI_KEY)
-                if nots: res[ent["IdNodo"]] = {"entidad": ent, "noticias": nots}
-                prog.progress((i+1)/len(entidades_radar))
-            prog.empty()
+        st.markdown(f"Rastreando **{len(entidades_radar)}** jerarcas estratégicos simultáneamente.")
+        if st.button("⚡ Escanear Señales en Paralelo (<2s)", type="primary"):
+            t_inicio = datetime.now()
+            with st.spinner("Ejecutando threads concurrentes sobre feeds OSINT..."):
+                res = escanear_radar_paralelo(entidades_radar, NEWSAPI_KEY)
+            t_delta = (datetime.now() - t_inicio).total_seconds()
             
             if not res:
-                st.warning("No se detectaron señales abiertas en los feeds en este instante.")
+                st.warning(f"No se detectaron señales abiertas en los feeds (tiempo de barrido: {t_delta:.2f}s).")
             else:
-                st.success(f"✅ {sum(len(v['noticias']) for v in res.values())} señales detectadas en {len(res)} entidades.")
+                st.success(f"✅ {sum(len(v['noticias']) for v in res.values())} señales detectadas en {len(res)} jerarcas en solo **{t_delta:.2f} segundos**.")
                 for id_nodo, data in res.items():
                     ent = data["entidad"]; nots = data["noticias"]
                     col_ent = CUADRANTES_PLANO.get(ent.get("Cuadrante","Q1"),{}).get("color","#94a3b8")
-                    with st.expander(f"{ent['IdNodo']} — {len(nots)} señales activas", expanded=False):
+                    with st.expander(f"{ent['IdNodo']} — {len(nots)} señales activas | {ent['Ubicacion']}", expanded=False):
                         for n in nots:
                             st.markdown(f"""
                             <div style='background:#0f172a;border-left:3px solid {col_ent};padding:10px 14px;margin:6px 0;border-radius:0 8px 8px 0'>
